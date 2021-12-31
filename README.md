@@ -1,9 +1,9 @@
-# Redisearch-Digital-Banking-redistemplate
+# Redisearch-Digital-Banking-redisson
 
-Provides a quick-start example of using Redis with springBoot with Banking structures.  Digital Banking uses an API microservices approach to enable high speed requests for account, customer and transaction information.  As seen below, this data is useful for a variety of business purposes in the bank.
+Provides a quick-start example of using Redis with springBoot and redisson with Banking structures.  Digital Banking uses an API microservices approach to enable high speed requests for account, customer and transaction information.  As seen below, this data is useful for a variety of business purposes in the bank.
 <a href="" rel="Digital Banking"><img src="images/DigitalBanking.png" alt="" /></a>
 
-### Note:  This is the same as Redisearch-Digital-Banking but uses redistemplate instead of any of the crudrepository indexes.  redisearch 2.0 indexes will be used.  This is not using the crudrepository for the basic redis data. 
+### Note:  This is the same as Redisearch-Digital-Banking but uses redisson redistemplate instead of any of the crudrepository indexes.  redisearch 2.0 indexes will be used.  This is not using the crudrepository for the basic redis data. 
 
 ## Overview
 In this tutorial, a java spring boot application is run through a jar file to support typical API calls to a REDIS banking data layer.  A redis docker configuration is included.
@@ -32,22 +32,21 @@ In this tutorial, a java spring boot application is run through a jar file to su
  * [spring async tips](https://dzone.com/articles/effective-advice-on-spring-async-part-1)
  * [brewdis sample application](https://github.com/redis-developer/brewdis)
  * [redis-developer lettucemod mesclun](https://github.com/redis-developer/lettucemod)
+ * [redisson with spring boot starter](https://github.com/redisson/redisson/tree/master/redisson-spring-boot-starter#2-add-settings-into-applicationsettings-file)
 
 
 ## Technical Overview
 
-This github java code uses the mesclun library for redis modules.  The mesclun library supports RediSearch, RedisGears, and RedisTimeSeries.  The original github only used spring java without redisearch.  That repository is still intact at [this github location](https://github.com/jphaugla/Redis-Digital-Banking).  Another subsequent version uses crud repository and search at [this github location](https://github.com/jphaugla/Redisearch-Digital-Banking)
-All of the Spring Java indexes have been removed in this version.  All the crud repository will also be removed in this when it is complete.
+This github java code uses the redisson java library with spring boot starter for redis.   
 
 ### The spring java code
 This is basic spring links
-* [Spring Redis](https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#redis.repositories.indexes) 
-* *boot*-Contains index creation for each of the four redisearch indexes used in this solution:  Account, Customer, Merchant, and Transaction
+* [Spring Redis](https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#redis.repositories.indexes)
 * *config*-Initial configuration module using autoconfiguration and a threadpool sizing to adjust based on machine size
 * *controller*-http API call interfaces
 * *data*-code to generate POC type of customer, account, and transaction code
 * *domain*-has each of the java objects with their columns.  Enables all the getter/setter methods
-* *repository*-has CRUD repository definitions.  With transition to redisearch 2.0, not used as heavily as previously.  This is where the redistemplate code is added if crud repository is no longer used.
+* *repository*-This is repository layer
 * *service*-asyncservice and bankservice doing the interaction with redis
 ### 
 The java code demonstrates common API actions with the data layer in REDIS.  The java spring Boot framework minimizes the amount of code to build and maintain this solution.  Maven is used to build the java code and the code is deployed to the tomcat server.
