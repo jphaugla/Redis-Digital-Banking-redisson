@@ -1,0 +1,26 @@
+app:
+  accountSearchIndexName: Account
+  emailSearchIndexName: Email
+  numberOfCarts: '2500'
+  phoneSearchIndexName: Phone
+  transactionReturnSearchIndexName: TransactionReturn
+  customerSearchIndexName: Customer
+  merchantSearchIndexName: Merchant
+  transactionSearchIndexName: Transaction
+  ratingStars: '5'
+  numberOfRatings: '5000'
+spring:
+  redis:
+    redisson:
+      file: classpath:redisson.yaml
+    timeout: 1000ms
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+logging:
+  level:
+    com:
+      jphaugla: DEBUG
+    org:
+      springframework: INFO
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} - %msg%n'
