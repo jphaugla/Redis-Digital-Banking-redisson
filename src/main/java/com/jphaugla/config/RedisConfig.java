@@ -1,8 +1,5 @@
 package com.jphaugla.config;
 
-import jdk.internal.loader.Resource;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 
 import org.redisson.spring.data.connection.RedissonConnectionFactory;

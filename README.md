@@ -69,6 +69,8 @@ docker-compose up -d
 
 ## Getting Started without Docker on ubuntu
 
+This docker compose will build the docker image for the java application and deploy it to docker.  The following steps are if you want to run on a separate environment without docker.  To do this, comment out the bankapp from the docker image
+
 1. Install maven and java
 ```bash
 sudo apt-get install maven
