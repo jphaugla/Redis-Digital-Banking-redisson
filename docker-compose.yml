@@ -30,3 +30,6 @@ services:
       - '8080:8080'
     volumes:
       - "./app/:/usr/src/app"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379

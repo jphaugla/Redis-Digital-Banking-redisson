@@ -1,2 +1,2 @@
 singleServerConfig:
-  address: "redis://redis:6379"
+  address: "redis://${REDIS_HOST}:${REDIS_PORT}"
