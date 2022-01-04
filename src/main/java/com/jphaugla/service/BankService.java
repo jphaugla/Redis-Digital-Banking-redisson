@@ -148,7 +148,7 @@ public class BankService {
 	// Phone
 	//
 	public Optional<Phone> getPhoneNumber(String phoneString) {
-		return phoneRepository.get(phoneString);
+		return Optional.ofNullable(phoneRepository.get(phoneString));
 	}
 
 	public Optional<Customer> getCustomerByPhone(String phoneString) {
@@ -156,18 +156,14 @@ public class BankService {
 		//  first, get phone hash with this phone number
 		//   next, get the customer id with this phone number
 		//   third, use the customer id to get the customer
-		Optional<Phone> optPhone = getPhoneNumber(phoneString);
+		Phone phone = phoneRepository.get(phoneString);
 		Customer returnCustomer = null;
-		logger.info("in bankservice.getCustomerByPhone optphone is" + optPhone.isPresent());
-		if (optPhone.isPresent()) {
-			Phone onePhone = optPhone.get();
-			String customerId = onePhone.getCustomerId();
-			String cleanCustomerId = customerId.replaceAll("\"", "");
-			logger.info(" onePhone is " + onePhone.getPhoneNumber() + ":" + onePhone.getPhoneLabel() + ":" + onePhone.getCustomerId());
-			returnCustomer = customerRepository.get(cleanCustomerId);
-			logger.info("customer is " + returnCustomer);
+		// logger.info("in bankservice.getCustomerByPhone phone is" + phone);
+		if (phone != null) {
+			String customerId = phone.getCustomerId();
+			returnCustomer = customerRepository.get(customerId);
+			// logger.info("customer is " + returnCustomer);
 		}
-
 		return Optional.of(returnCustomer);
 	}
 	//
@@ -177,30 +173,39 @@ public class BankService {
 		return Optional.ofNullable(emailRepository.get(email));
 	}
 
-	public Customer getCustomerByEmail(String emailString) {
+	public Optional<Customer> getCustomerByEmail(String emailString) {
 		// get list of customers having this email number
 		//  first, get email hash with this email number
 		//   next, get the customer id with this email number
 		//   third, use the customer id to get the customer
-		Optional<Email> optionalEmail = getEmail(emailString);
-		Optional<Customer> returnCustomer = null;
-		Customer returnCust = null;
-		logger.info("in bankservice.getCustomerByEmail optEmail is" + optionalEmail.isPresent());
-		if (optionalEmail.isPresent()) {
-			Email oneEmail = optionalEmail.get();
-			String customerId = oneEmail.getCustomerId();
+		Email email = emailRepository.get(emailString);
+		Customer returnCustomer = null;
+		// logger.info("in bankservice.getCustomerByEmail email is" + email);
+		if (email != null) {
+			String customerId = email.getCustomerId();
 			// logger.info("customer is " + customerId);
-			returnCustomer = Optional.ofNullable(customerRepository.get(customerId));
+			returnCustomer = customerRepository.get(customerId);
 		}
 
-		if ((returnCustomer != null) && (returnCustomer.isPresent())) {
-			returnCust = returnCustomer.get();
-			logger.info("customer is " + returnCust);
+		return Optional.of(returnCustomer);
+	}
 
-		} else {
-			returnCust = null;
+	public List<String> getCustomerPhone(String custPhoneKey) {
+		Set<String> phones = redisTemplate.opsForSet().members(custPhoneKey);
+		List<String> phoneList = new ArrayList<String>();
+		for ( String phone:phones) {
+			phoneList.add(phone);
 		}
-		return returnCust;
+		return phoneList;
+	}
+
+	public List<String> getCustomerEmail(String custEmailKey) {
+		Set<String> emails = redisTemplate.opsForSet().members(custEmailKey);
+		List<String>emailList = new ArrayList<String>();
+		for ( String email:emails) {
+			emailList.add(email);
+		}
+		return emailList;
 	}
 
 	public int deleteCustomerEmail(String customerID) {
@@ -570,6 +575,8 @@ public class BankService {
 				custTimer.getTimeTakenSeconds() + " secs");
 		return allAccounts;
 	}
+
+
 
 	//
 	// TransactionReturns

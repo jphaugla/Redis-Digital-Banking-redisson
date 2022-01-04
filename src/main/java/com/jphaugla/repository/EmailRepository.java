@@ -42,8 +42,9 @@ public class EmailRepository{
 	public String create(Email email) {
 
 		Map<Object, Object> emailHash = mapper.convertValue(email, Map.class);
-		redisTemplateW1.opsForHash().putAll("Email:" + email.getEmailAddress(), emailHash);
-		// for demo purposed add a member to the set for the Customer
+		String emailKey = "Email:" + email.getEmailAddress();
+		redisTemplateW1.opsForHash().putAll(emailKey, emailHash);
+		// for demo purposes add a member to the set for the Customer
 		stringRedisTemplate.opsForSet().add("CustEmail:" + email.getCustomerId(), email.getEmailAddress());
 		// redisTemplate.opsForHash().putAll("Email:" + email.getEmailId(), emailHash);
 		// logger.info(String.format("Email with ID %s saved", email.getEmailAddress()));
@@ -51,9 +52,9 @@ public class EmailRepository{
 	}
 
 	public Email get(String emailId) {
-		logger.info("in EmailRepository.get with email id=" + emailId);
-		String fullKey = "Email:" + emailId;
-		Map<Object, Object> emailHash = stringRedisTemplate.opsForHash().entries(fullKey);
+		// logger.info("in EmailRepository.get with email id=" + emailId);
+		Map<Object, Object> emailHash = redisTemplateW1.opsForHash().entries(emailId);
+		// logger.info(String.valueOf(emailHash));
 		Email email = mapper.convertValue(emailHash, Email.class);
 		return (email);
 	}

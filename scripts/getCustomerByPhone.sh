@@ -1,3 +1,3 @@
 # retrieve transations for customer
 # get using a customer id.  Use redisinsight's search to find a good custid
-curl -X GET -H "Content-Type: application/json"  'http://localhost:8080/customerLoop/?numberRange=20'
+curl -X GET -H "Content-Type: application/json"  'http://localhost:8080/phoneLoop/?numberRange=200'

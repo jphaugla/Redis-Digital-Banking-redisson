@@ -53,9 +53,11 @@ public class CustomerRepository{
 	}
 
 	public Customer get(String customerId) {
-		logger.info("in CustomerRepository.get with customer id=" + customerId);
-		String fullKey = "Customer:" + customerId;
+
+		String fullKey = "Customer:" + customerId.replaceAll("\"","");
+		// logger.info("in CustomerRepository.get with customer id=" + customerId + " full key is " + fullKey);
 		Map<Object, Object> customerHash = stringRedisTemplate.opsForHash().entries(fullKey);
+		// logger.info("full hash " + customerHash.toString());
 		Customer customer = mapper.convertValue(customerHash, Customer.class);
 		return (customer);
 	}

@@ -42,20 +42,22 @@ public class PhoneRepository{
 	public String create(Phone phone) {
 
 		Map<Object, Object> phoneHash = mapper.convertValue(phone, Map.class);
-		redisTemplateW1.opsForHash().putAll("Phone:" + phone.getPhoneNumber(), phoneHash);
+		String phoneKey = "Phone:" + phone.getPhoneNumber();
+		redisTemplateW1.opsForHash().putAll(phoneKey, phoneHash);
+		// for demo purposes add a member to the set for the Customer
+		stringRedisTemplate.opsForSet().add("CustPhone:" + phone.getCustomerId(), phone.getPhoneNumber());
 		// redisTemplate.opsForHash().putAll("Phone:" + phone.getPhoneId(), phoneHash);
 		// logger.info(String.format("Phone with ID %s saved", phone.getPhoneNumber()));
 		return "Success\n";
 	}
 
-	public Optional<Phone> get(String phoneId) {
-		logger.info("in Phone Repository.get with phone id=" + phoneId);
-		String fullKey = "Phone:" + phoneId;
-		Map<Object, Object> phoneHash = stringRedisTemplate.opsForHash().entries(fullKey);
-		logger.info("Full key is " + fullKey + " phoneHash is " + phoneHash);
+	public Phone get(String phoneId) {
+		// logger.info("in Phone Repository.get with phone id=" + phoneId);
+		Map<Object, Object> phoneHash = stringRedisTemplate.opsForHash().entries(phoneId);
+		// logger.info("Full key is " + phoneId + " phoneHash is " + phoneHash);
 		Phone phone = mapper.convertValue(phoneHash, Phone.class);
-		logger.info("return phone " + phone.getPhoneNumber() + ":" + phone.getPhoneLabel() + ":" + phone.getCustomerId());
-		return Optional.ofNullable((phone));
+		// logger.info("return phone " + phone.getPhoneNumber() + ":" + phone.getPhoneLabel() + ":" + phone.getCustomerId());
+		return (phone);
 	}
 
 

@@ -204,25 +204,98 @@ public class BankingController {
 
 	@GetMapping("/customerByEmail")
 
-	public Customer getCustomerByEmail(@RequestParam String email) {
+	public Optional<Customer> getCustomerByEmail(@RequestParam String email) {
 		logger.debug("IN get customerByEmail, email is " + email);
 		return bankService.getCustomerByEmail(email);
 	}
 
 	@GetMapping("/customerLoop")
 
-	public void customerLoop (@RequestParam int numberOfCustomers) {
+	public void customerLoop (@RequestParam int numberRange) {
 		//  prefix is in bankservice
 		// String customerPrefix="Customer:";
 		String customerId = "";
 		String postfix = "J";
-		int baseNumber = 1000000;
-		int endNumber = baseNumber + numberOfCustomers;
+		int baseNumber = 1000001;
+		int endNumber = baseNumber + numberRange;
 		for (int i=baseNumber;i<endNumber;i++) {
 			customerId = String.valueOf(i) + postfix;
 			logger.debug("Customer with customerId=" + customerId);
 			Optional<Customer> returnCustomer = bankService.getCustomer(customerId);
 			logger.debug("got customer " + returnCustomer.get().getFullName());
+		}
+		return;
+	}
+
+	@GetMapping("/emailLoop")
+
+	public void emailLoop (@RequestParam int numberRange) {
+		//  prefix is in 	bankservice
+		// String customerPrefix="Customer:";
+		String customerId = "";
+		String email = "";
+		String postfix = "J@gmail.com";
+		int baseNumber = 1000001;
+		int endNumber = baseNumber + numberRange;
+		for (int i=baseNumber;i<endNumber;i++) {
+			email = "Email:" + String.valueOf(i) + postfix;
+			logger.debug("IN get emailloop, email is " + email);
+			Optional<Customer> returnCustomer = bankService.getCustomerByEmail(email);
+			logger.debug("got customer " + returnCustomer.get().getFullName());
+		}
+		return;
+	}
+
+	@GetMapping("/phoneLoop")
+
+	public void phoneLoop (@RequestParam int numberRange) {
+		//  prefix is in 	bankservice
+		// String customerPrefix="Customer:";
+		String customerId = "";
+		String phone = "";
+		String postfix = "Jh";
+		int baseNumber = 1000001;
+		int endNumber = baseNumber + numberRange;
+		for (int i=baseNumber;i<endNumber;i++) {
+			phone = "Phone:" + String.valueOf(i) + postfix;
+			logger.debug("IN get phoneloop, phone is " + phone);
+			Optional<Customer> returnCustomer = bankService.getCustomerByPhone(phone);
+			logger.debug("got customer " + returnCustomer.get().getFullName());
+		}
+		return;
+	}
+	@GetMapping("/customerPhoneLoop")
+
+	public void customerPhoneLoop (@RequestParam int numberRange) {
+		//  prefix is in 	bankservice
+		// String customerPrefix="Customer:";
+		String custPhoneKey = "";
+		String postfix = "J";
+		int baseNumber = 1000001;
+		int endNumber = baseNumber + numberRange;
+		for (int i=baseNumber;i<endNumber;i++) {
+			custPhoneKey = "CustPhone:" + String.valueOf(i) + postfix;
+			logger.debug("IN get customerPhoneloop, customer is " + custPhoneKey);
+			List<String> returnPhones = bankService.getCustomerPhone(custPhoneKey);
+			logger.debug("return phones" + returnPhones.toString());
+		}
+		return;
+	}
+
+	@GetMapping("/customerEmailLoop")
+
+	public void customerEmailLoop (@RequestParam int numberRange) {
+		//  prefix is in 	bankservice
+		// String customerPrefix="Customer:";
+		String custEmailKey = "";
+		String postfix = "J";
+		int baseNumber = 1000001;
+		int endNumber = baseNumber + numberRange;
+		for (int i=baseNumber;i<endNumber;i++) {
+			custEmailKey = "CustEmail:" + String.valueOf(i) + postfix;
+			logger.debug("IN get customerEmailloop, customer is " + custEmailKey);
+			List<String> returnEmails = bankService.getCustomerEmail(custEmailKey);
+			logger.debug("return emails" + returnEmails.toString());
 		}
 		return;
 	}
