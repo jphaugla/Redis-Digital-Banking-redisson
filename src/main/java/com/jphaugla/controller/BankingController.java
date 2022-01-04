@@ -65,19 +65,7 @@ public class BankingController {
 
 		return "Done";
 	}
-	@GetMapping("/customerByPhone")
 
-	public Customer getCustomerByPhone(@RequestParam String phoneString) {
-		logger.debug("In get customerByPhone with phone as " + phoneString);
-		return bankService.getCustomerByPhone(phoneString);
-	}
-
-	@GetMapping("/customerByEmail")
-
-	public Customer getCustomerByEmail(@RequestParam String email) {
-		logger.debug("IN get customerByEmail, email is " + email);
-		return bankService.getCustomerByEmail(email);
-	}
 /*
 	@GetMapping("/customerByStateCity")
 
@@ -207,6 +195,38 @@ public class BankingController {
 	public Optional<Customer> getCustomer(@RequestParam String customerId) {
 		return bankService.getCustomer(customerId);
 	}
+	@GetMapping("/customerByPhone")
+
+	public Optional<Customer> getCustomerByPhone(@RequestParam String phoneString) {
+		logger.debug("In get customerByPhone with phone as " + phoneString);
+		return bankService.getCustomerByPhone(phoneString);
+	}
+
+	@GetMapping("/customerByEmail")
+
+	public Customer getCustomerByEmail(@RequestParam String email) {
+		logger.debug("IN get customerByEmail, email is " + email);
+		return bankService.getCustomerByEmail(email);
+	}
+
+	@GetMapping("/customerLoop")
+
+	public void customerLoop (@RequestParam int numberOfCustomers) {
+		//  prefix is in bankservice
+		// String customerPrefix="Customer:";
+		String customerId = "";
+		String postfix = "J";
+		int baseNumber = 1000000;
+		int endNumber = baseNumber + numberOfCustomers;
+		for (int i=baseNumber;i<endNumber;i++) {
+			customerId = String.valueOf(i) + postfix;
+			logger.debug("Customer with customerId=" + customerId);
+			Optional<Customer> returnCustomer = bankService.getCustomer(customerId);
+			logger.debug("got customer " + returnCustomer.get().getFullName());
+		}
+		return;
+	}
+
 /*
 	@GetMapping("/deleteCustomer")
 
@@ -216,6 +236,8 @@ public class BankingController {
 
 
  */
+
+
 	@GetMapping("/deleteCustomerEmail")
 
 	public int deleteCustomerEmail(@RequestParam String customerId) {

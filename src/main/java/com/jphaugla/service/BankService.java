@@ -151,30 +151,24 @@ public class BankService {
 		return phoneRepository.get(phoneString);
 	}
 
-	public Customer getCustomerByPhone(String phoneString) {
+	public Optional<Customer> getCustomerByPhone(String phoneString) {
 		// get list of customers having this phone number
 		//  first, get phone hash with this phone number
 		//   next, get the customer id with this phone number
 		//   third, use the customer id to get the customer
 		Optional<Phone> optPhone = getPhoneNumber(phoneString);
-		Optional<Customer> returnCustomer = null;
-		Customer returnCust = null;
+		Customer returnCustomer = null;
 		logger.info("in bankservice.getCustomerByPhone optphone is" + optPhone.isPresent());
 		if (optPhone.isPresent()) {
 			Phone onePhone = optPhone.get();
 			String customerId = onePhone.getCustomerId();
+			String cleanCustomerId = customerId.replaceAll("\"", "");
 			logger.info(" onePhone is " + onePhone.getPhoneNumber() + ":" + onePhone.getPhoneLabel() + ":" + onePhone.getCustomerId());
-			returnCustomer = Optional.ofNullable(customerRepository.get(customerId));
+			returnCustomer = customerRepository.get(cleanCustomerId);
+			logger.info("customer is " + returnCustomer);
 		}
 
-		if ((returnCustomer != null) && (returnCustomer.isPresent())) {
-			returnCust = returnCustomer.get();
-			// logger.info("customer is " + returnCust);
-
-		} else {
-			returnCust = null;
-		}
-		return returnCust;
+		return Optional.of(returnCustomer);
 	}
 	//
 	// Email

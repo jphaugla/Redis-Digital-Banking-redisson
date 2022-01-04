@@ -23,6 +23,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.annotation.EnableAsync;
 
@@ -55,10 +56,10 @@ public class RedisConfig {
     public RedisTemplate<Object, Object> redisTemplateW1 ( RedissonConnectionFactory redissonConnectionFactory) {
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redissonConnectionFactory);
-        // redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-       // redisTemplate.setKeySerializer(new StringRedisSerializer());
-        // redisTemplate.setHashValueSerializer(new GenericToStringSerializer<Long>(Long.class));
-        // redisTemplate.setHashValueSerializer(new Jackson2JsonRedisSerializer(Object.class));
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new GenericToStringSerializer<Long>(Long.class));
+        redisTemplate.setHashValueSerializer(new Jackson2JsonRedisSerializer(Object.class));
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }

@@ -131,7 +131,7 @@ public class AsyncService {
         //   writes a sorted set to be used as the posted date index
         // logger.info("entering writeAccountTransactions with list size of " + transactionList.size());
         writeTransactionList(transactionList);
-        // writePostedDateIndex(transactionList);
+        writePostedDateIndex(transactionList);
         //   write using redisTemplate
         for (Transaction transaction:transactionList) {
             String hashName = "Transaction:" + transaction.getTranId();

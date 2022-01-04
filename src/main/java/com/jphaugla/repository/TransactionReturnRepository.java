@@ -44,7 +44,7 @@ public class TransactionReturnRepository{
 		Map<Object, Object> transactionReturnHash = mapper.convertValue(transactionReturn, Map.class);
 		redisTemplateW1.opsForHash().putAll("TransactionReturn:" + transactionReturn.getReasonCode(), transactionReturnHash);
 		// redisTemplate.opsForHash().putAll("TransactionReturn:" + transactionReturn.getTransactionReturnId(), transactionReturnHash);
-		logger.info(String.format("TransactionReturn with ID %s saved", transactionReturn.getReasonCode()));
+		// logger.info(String.format("TransactionReturn with ID %s saved", transactionReturn.getReasonCode()));
 		return "Success\n";
 	}
 	public String createAll(List<TransactionReturn> transactionReturnList) {
