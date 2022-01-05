@@ -55,14 +55,14 @@ The java code demonstrates common API actions with the data layer in REDIS.  The
 <a href="" rel="Tables Structures Used"><img src="images/Tables.png" alt="" /></a>
 
 ## Getting Started using Docker desktop
-1. Prepare Docker environment-see the Prerequisites section above...
-2. Pull this github into a directory
+* Prepare Docker environment-see the Prerequisites section above...
+* Pull this github into a directory
 ```bash
 git clone https://github.com/jphaugla/Redisearch-Digital-Banking.git
 ```
-3. Refer to the notes for redis Docker images used but don't get too bogged down as docker compose handles everything except for a few admin steps on tomcat.
+* Refer to the notes for redis Docker images used but don't get too bogged down as docker compose handles everything except for a few admin steps on tomcat.
  * [https://hub.docker.com/r/bitnami/redis/](https://hub.docker.com/r/bitnami/redis/)  
-4. Open terminal and change to the github home where you will see the docker-compose.yml file, then: 
+* Open terminal and change to the github home where you will see the docker-compose.yml file, then: 
 ```bash
 docker-compose up -d
 ```
@@ -71,7 +71,7 @@ docker-compose up -d
 
 This docker compose will build the docker image for the java application and deploy it to docker.  The following steps are if you want to run on a separate environment without docker.  To do this, comment out the bankapp from the docker image
 
-1. Install maven and java
+* Install maven and java
 ```bash
 sudo apt-get install maven
 sudo apt-get install default-jdk
@@ -80,49 +80,69 @@ sudo apt-get install default-jdk
 ```bash
 git clone https://github.com/jphaugla/Redisearch-Digital-Banking.git
 ```
-1. edit ./src/main/resources/application.properties to change the redis host and the redis port number 
+* edit ./src/main/resources/application.properties to change the redis host and the redis port number 
 
 ## Execute sample application 
 
-1. Compile the code
+* Compile the code
 ```bash
 mvn package
 ```
-2.  run the jar file.   
+*  run the jar file.   
 ```bash
+export REDIS_HOST=localhost
+export REDIS_PORT=6379
 java -jar target/redis-0.0.1-SNAPSHOT.jar
 ```
-3.  Test the application from a separate terminal window.  This script uses an API call to generate sample banking customers, accounts and transactions.  It uses Spring ASYNC techniques to generate higher load.  A flag chooses between running the transactions pipelined in Redis or in normal non-pipelined method.
+*  Test the application from a separate terminal window.  This script uses an API call to generate sample banking customers, accounts and transactions.  It uses Spring ASYNC techniques to generate higher load.  A flag chooses between running the transactions pipelined in Redis or in normal non-pipelined method.
 ```bash
 ./scripts/generateData.sh
 ```
 Shows a benchmark test run of  generateData.sh on GCP servers.  Although, this test run is using redisearch 1.0 code base.  Need to rerun this test.
 <a href="" rel="Generate Data Benchmark"><img src="images/Benchmark.png" alt="" /></a>
 
-4.  Investigate the APIs in ./scripts.  Adding the redisearch queries behind each script here also...
-  * addTag.sh - add a tag to a transaction.  Tags allow user to mark  transactions to be in a buckets such as Travel or Food for budgetary tracking purposes
-  * deleteCustomer.sh - delete all customers matching a string
+##  Investigate the APIs 
+These scripts are in ./scripts
+  * addTag.sh (currently not implemented) - add a tag to a transaction.  Tags allow user to mark  transactions to be in a buckets such as Travel or Food for budgetary tracking purposes
+  * deleteCustomer.sh (currently not implemented) - delete all customers matching a string
   * generateData.sh - simple API to generate default customer, accounts, merchants, phone numbers, emails and transactions
   * generateLots.sh - for server testing to generate higher load levels.  Use with startAppservers.sh.  Not for use with docker setup.  This is load testing with redis enterprise and client application running in same network in the cloud.
-  * getByAccount.sh - find transactions for an account between a date range
-  * getByCreditCard.sh - find transactions for a credit card  between a date range
+  * getByAccount.sh (currently not implemented) - find transactions for an account between a date range
+  * getByCreditCard.sh (currently not implemented) - find transactions for a credit card  between a date range
+  * getCustomerByEmails.sh - gets email for customer ids starting from 100001 for the desired range - this is used for generating read load
+  * getCustomerByPhone.sh - gets phone numbers for customer ids starting from 100001 for the desired range - this is used for generating read load
+  * getCustomers.sh - gets a range of customer id starting from 100001 for the desired range - this is used for generating read load
+  * getCustomerEmails.sh - gets email for customer ids starting from 100001 for the desired customer range - this is used for generating read load
+  * getCustomerPhones.sh - gets phone numbers  for customer ids starting from 100001 for the desired range - this is used for generating read load
   * getByCustID.sh - retrieve transactions for customer
   * getByEmail.sh - retrieve customer record using email address
-  * getByMerchant.sh - find all transactions for an account from one merchant for date range
-  * getByMerchantCategory.sh - find all transactions for an account from merchant category for date range
-  * getByNamePhone.sh - get customers by phone and full name.
+  * getByMerchant.sh (currently not implemented) - find all transactions for an account from one merchant for date range
+  * getByMerchantCategory.sh (currently not implemented) - find all transactions for an account from merchant category for date range
+  * getByNamePhone.sh (currently not implemented) - get customers by phone and full name.
   * getByPhone.sh - get customers by phone only
-  * getByStateCity.sh - get customers by city and state
-  * getByZipLastname.sh -  get customers by zipcode and lastname.
-  * getReturns.sh - get returned transactions count by reason code
-  * getTags.sh - get all tags on an account
-  * getTaggedAccountTransactions.sh - find transactions for an account with a particular tag
+  * getByStateCity.sh (currently not implemented)  - get customers by city and state
+  * getByZipLastname.sh - (currently not implemented) get customers by zipcode and lastname.
+  * getReturns.sh (currently not implemented)  - get returned transactions count by reason code
+  * getTags.sh (currently not implemented) - get all tags on an account
+  * getTaggedAccountTransactions.sh (currently not implemented) - find transactions for an account with a particular tag
   * getTransaction.sh - get one transaction by its transaction ID
-  * getTransactionStatus.sh - see count of transactions by account status of PENDING, AUTHORIZED, SETTLED
+  * getTransactionStatus.sh (currently not implemented) - see count of transactions by account status of PENDING, AUTHORIZED, SETTLED
+  * loop.sh - used to load testing to keep infinite loop running.  pass parameter of script to run
   * putCustomer.sh - put a set of json customer records
   * saveAccount.sh - save a sample account
   * saveCustomer.sh - save a sample customer
   * saveTransaction.sh - save a sample Transaction
   * startAppservers.sh - start multiple app server instances for load testing
   * testPipeline.sh - test pipelining
-  * updateTransactionStatus.sh - generate new transactions to move all transactions from one transaction Status up to the next transaction status. Parameter is target status.  Can choose SETTLED or POSTED.  Will move 100,000 transactions per call
+  * updateTransactionStatus.sh (currently not implemented) - generate new transactions to move all transactions from one transaction Status up to the next transaction status. Parameter is target status.  Can choose SETTLED or POSTED.  Will move 100,000 transactions per call
+
+## Using repository to generate load
+* to generate data, use generateData.sh
+* to generate load, use the loop.sh script to create an infinite loop.  Pass a parameter of the script to use for the load
+```bash
+./generateData.sh
+./loop.sh getCustomers.sh
+```
+```bash
+./loops.sh getCustomerEmails.sh
+```
