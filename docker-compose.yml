@@ -32,3 +32,4 @@ services:
       - "./app/:/usr/src/app"
     environment:
       - REDIS_CONNECTION="redis://redis:6379"
+      - corePoolSize=20

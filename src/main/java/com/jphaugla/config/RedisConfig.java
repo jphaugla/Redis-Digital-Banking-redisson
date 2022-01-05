@@ -45,6 +45,8 @@ public class RedisConfig {
     private Environment env;
     private @Value("${spring.redis.timeout}")
     Duration redisCommandTimeout;
+    private @Value("${corePoolSize:20}")
+    int corePoolSize;
 
     @Bean
     public RedissonConnectionFactory redissonConnectionFactory(RedissonClient redisson) {
@@ -77,7 +79,7 @@ public class RedisConfig {
     public TaskExecutor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 //        on large 64 core machine, drove setCorePoolSize to 200 to really spike performance
-        executor.setCorePoolSize(20);
+        executor.setCorePoolSize(corePoolSize);
         executor.setMaxPoolSize(1000);
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setThreadNamePrefix("Async-");
