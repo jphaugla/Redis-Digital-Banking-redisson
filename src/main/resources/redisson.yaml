@@ -1,2 +1,2 @@
 singleServerConfig:
-  address: "redis://${REDIS_HOST}:${REDIS_PORT}"
+  address: ${REDIS_CONNECTION}
