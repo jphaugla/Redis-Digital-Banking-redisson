@@ -9,6 +9,7 @@ app:
   transactionSearchIndexName: Transaction
   ratingStars: '5'
   numberOfRatings: '5000'
+  corePoolSize: ${CORE_POOLSIZE}
 spring:
   redis:
     redisson:

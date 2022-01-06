@@ -91,6 +91,8 @@ mvn package
 *  run the jar file.   
 ```bash
 export REDIS_CONNECTION="redis://127.0.0.1:6379"
+# this is the number of threads used to generate data
+export CORE_POOLSIZE=23
 java -jar target/redis-0.0.1-SNAPSHOT.jar
 ```
 *  Test the application from a separate terminal window.  This script uses an API call to generate sample banking customers, accounts and transactions.  It uses Spring ASYNC techniques to generate higher load.  A flag chooses between running the transactions pipelined in Redis or in normal non-pipelined method.

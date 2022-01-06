@@ -1,9 +1,10 @@
 package com.jphaugla.config;
-
 import org.redisson.api.RedissonClient;
 
 import org.redisson.spring.data.connection.RedissonConnectionFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -11,14 +12,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-
-
 import org.springframework.data.redis.core.RedisTemplate;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.RedisPassword;
-import org.springframework.core.env.Environment;
+
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
@@ -42,10 +39,11 @@ import java.time.Duration;
 @ComponentScan("com.jphaugla")
 public class RedisConfig {
     @Autowired
-    private Environment env;
     private @Value("${spring.redis.timeout}")
     Duration redisCommandTimeout;
-    private @Value("${corePoolSize:20}")
+    private static final Logger logger = LoggerFactory.getLogger(RedisConfig.class);
+    @Autowired
+    private @Value("${app.corePoolSize:20}")
     int corePoolSize;
 
     @Bean
@@ -75,6 +73,7 @@ public class RedisConfig {
     }
 
 
+
     @Bean("threadPoolTaskExecutor")
     public TaskExecutor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -83,6 +82,7 @@ public class RedisConfig {
         executor.setMaxPoolSize(1000);
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setThreadNamePrefix("Async-");
+        logger.info("in threadpool bean, corePoolSize is " + String.valueOf(corePoolSize));
         return executor;
     }
 }
