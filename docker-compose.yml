@@ -3,7 +3,7 @@ services:
 
   redis:
     # image: "redislabs/redismod:latest"
-    image: "arm64v8/redis:latest"
+    image: "redis:latest"
     container_name: redis
     ports:
       - "6379:6379"
@@ -12,21 +12,21 @@ services:
 
   redis2:
     # image: "redislabs/redismod:latest"
-    image: "arm64v8/redis:latest"
+    image: "redis:latest"
     container_name: redis2
     ports:
       - "6380:6380"
-    command: --port 6380
+    command: --port 6380 --slaveof redis 6379
     volumes:
       - ./redis_data2:/data
 
   redis3:
     # image: "redislabs/redismod:latest"
-    image: "arm64v8/redis:latest"
+    image: "redis:latest"
     container_name: redis3
     ports:
       - "6381:6381"
-    command: --port 6381
+    command: --port 6381 --slaveof redis 6379
     volumes:
       - ./redis_data3:/data
 
