@@ -66,10 +66,16 @@ git clone https://github.com/jphaugla/Redisearch-Digital-Banking.git
 ```bash
 docker-compose up -d
 ```
+this environment has 4 docker containers, 3 redis containers (redis, redis2, redis3).  redis2 and redis3 are replicas of the primary redis instance in the container simply named "redis".
 
-## Getting Started without Docker on ubuntu
+This docker compose will build the docker image for the java application using "docker compose build" and deploy it to docker.  
 
-This docker compose will build the docker image for the java application and deploy it to docker.  The following steps are if you want to run on a separate environment without docker.  To do this, comment out the bankapp from the docker image
+## Run java application locally against redis in containers
+The following steps are if you want to run on a separate environment without docker.  To do this, comment out the bankapp from the docker image
+* turn off the bankapp docker container to run locally instead
+```bash
+docker stop bankapp
+```
 
 * Install maven and java
 ```bash
@@ -80,7 +86,6 @@ sudo apt-get install default-jdk
 ```bash
 git clone https://github.com/jphaugla/Redisearch-Digital-Banking.git
 ```
-* edit ./src/main/resources/application.properties to change the redis host and the redis port number 
 
 ## Execute sample application 
 
@@ -88,7 +93,7 @@ git clone https://github.com/jphaugla/Redisearch-Digital-Banking.git
 ```bash
 mvn package
 ```
-*  run the jar file.   
+*  run the jar file after setting up required environment variables.   
 ```bash
 export REDIS_CONNECTION="redis://127.0.0.1:6379"
 export REDIS_REPLICA1="redis://127.0.0.1:6380"
