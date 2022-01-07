@@ -13,7 +13,7 @@ app:
 spring:
   redis:
     redisson:
-      file: classpath:redisson.yaml
+      file: classpath:redisson-replica.yaml
     timeout: 1000ms
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration

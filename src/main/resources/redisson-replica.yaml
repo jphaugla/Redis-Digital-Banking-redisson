@@ -1,0 +1,7 @@
+masterSlaveServersConfig:
+  masterAddress: ${REDIS_CONNECTION}
+  readMode: "MASTER_SLAVE"
+  subscriptionMode: "SLAVE"
+  slaveAddresses:
+    - ${REDIS_REPLICA1}
+    - ${REDIS_REPLICA2}
