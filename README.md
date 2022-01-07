@@ -8,12 +8,12 @@ Provides a quick-start example of using Redis with springBoot and redisson with 
 ## Overview
 In this tutorial, a java spring boot application is run through a jar file to support typical API calls to a REDIS banking data layer.  A redis docker configuration is included.
 
-## Redis Advantages for Digital Banking
+## Redis and Redisson advantages for Digital Banking
  * Redis easily handles high write transaction volume
  * Redis has no tombstone issues and can upsert posted transactions over pending
  * Redis Enterprise scales vertically (large nodes)  and horizontally (many nodes)
  * Redisearch 2.0 automatically indexes the hash structure created by Spring Java CRUD repository
-
+ * Redisson will use read replicas to distribute the read workload across a primary and multiple replicas
 ## Requirements
 * Docker installed on your local system, see [Docker Installation Instructions](https://docs.docker.com/engine/installation/).
 * Alternatively, can run Redis Enterprise and set the redis host and port in the application.properties file
@@ -33,7 +33,7 @@ In this tutorial, a java spring boot application is run through a jar file to su
  * [brewdis sample application](https://github.com/redis-developer/brewdis)
  * [redis-developer lettucemod mesclun](https://github.com/redis-developer/lettucemod)
  * [redisson with spring boot starter](https://github.com/redisson/redisson/tree/master/redisson-spring-boot-starter#2-add-settings-into-applicationsettings-file)
-
+ * [redisson with primary and replica shards](https://redisson.org/glossary/redis-master-slave-replication.html)
 
 ## Technical Overview
 
@@ -67,7 +67,7 @@ git clone https://github.com/jphaugla/Redisearch-Digital-Banking.git
 docker-compose up -d
 ```
 this environment has 4 docker containers, 3 redis containers (redis, redis2, redis3).  redis2 and redis3 are replicas of the primary redis instance in the container simply named "redis".
-
+NOTE:  redisson splits read load evenly across the three redis containers
 This docker compose will build the docker image for the java application using "docker compose build" and deploy it to docker.  
 
 ## Run java application locally against redis in containers
