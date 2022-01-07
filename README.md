@@ -91,6 +91,8 @@ mvn package
 *  run the jar file.   
 ```bash
 export REDIS_CONNECTION="redis://127.0.0.1:6379"
+export REDIS_REPLICA1="redis://127.0.0.1:6380"
+export REDIS_REPLICA2="redis://127.0.0.1:6381"
 # this is the number of threads used to generate data
 export CORE_POOLSIZE=23
 java -jar target/redis-0.0.1-SNAPSHOT.jar
