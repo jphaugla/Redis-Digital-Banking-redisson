@@ -31,15 +31,15 @@ services:
       - ./redis_data3:/data
 
 
-  insight:
-    image: "redislabs/redisinsight:latest"
-    container_name: insight
-    ports:
-      - "8001:8001"
-    volumes:
-      - ./redisinsight:/db
-    depends_on:
-      - redis
+#   insight:
+#     image: "redislabs/redisinsight:latest"
+#     container_name: insight
+#     ports:
+#       - "8001:8001"
+#     volumes:
+#       - ./redisinsight:/db
+#     depends_on:
+#       - redis
 
   bankapp:
     image: bankapp
@@ -53,8 +53,8 @@ services:
       - "./app/:/usr/src/app"
     environment:
       - REDIS_CONNECTION="redis://redis:6379"
-      - REDIS_REPLICA1="redis://redis:6380"
-      - REDIS_REPLICA2="redis://redis:6381"
+      - REDIS_REPLICA1="redis://redis2:6380"
+      - REDIS_REPLICA2="redis://redis3:6381"
       - CORE_POOLSIZE=20
     depends_on:
       - redis
