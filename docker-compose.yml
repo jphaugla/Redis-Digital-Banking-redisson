@@ -56,6 +56,7 @@ services:
       - REDIS_REPLICA1="redis://redis2:6380"
       - REDIS_REPLICA2="redis://redis3:6381"
       - CORE_POOLSIZE=20
+      - READ_MODE="MASTER_SLAVE"
     depends_on:
       - redis
       - redis1

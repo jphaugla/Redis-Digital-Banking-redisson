@@ -14,6 +14,7 @@ In this tutorial, a java spring boot application is run through a jar file to su
  * Redis Enterprise scales vertically (large nodes)  and horizontally (many nodes)
  * Redisearch 2.0 automatically indexes the hash structure created by Spring Java CRUD repository
  * Redisson will use read replicas to distribute the read workload across a primary and multiple replicas
+
 ## Requirements
 * Docker installed on your local system, see [Docker Installation Instructions](https://docs.docker.com/engine/installation/).
 * Alternatively, can run Redis Enterprise and set the redis host and port in the application.properties file
@@ -93,7 +94,8 @@ git clone https://github.com/jphaugla/Redisearch-Digital-Banking.git
 ```bash
 mvn package
 ```
-*  run the jar file after setting up required environment variables.   
+* run the jar file after setting up required environment variables. 
+  * Also have set up a script to do these environment variables instead of typing this
 ```bash
 export REDIS_CONNECTION="redis://127.0.0.1:6379"
 export REDIS_REPLICA1="redis://127.0.0.1:6380"
