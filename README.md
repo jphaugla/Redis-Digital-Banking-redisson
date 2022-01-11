@@ -95,13 +95,20 @@ git clone https://github.com/jphaugla/Redisearch-Digital-Banking.git
 mvn package
 ```
 * run the jar file after setting up required environment variables. 
-  * Also have set up a script to do these environment variables instead of typing this
+  * Also have set up a script to do these environment variables instead of typing this under ./scripts/setEnv.sh to use this
+```bash
+source ./scripts/setEnv.sh
+```
+  * alternatively, these are the commands
 ```bash
 export REDIS_CONNECTION="redis://127.0.0.1:6379"
 export REDIS_REPLICA1="redis://127.0.0.1:6380"
 export REDIS_REPLICA2="redis://127.0.0.1:6381"
 # this is the number of threads used to generate data
 export CORE_POOLSIZE=23
+# this spreads read load across primary and replica shards
+#  setting this to "SLAVE" will only use the 2 replica shards for the reads
+export READ_MODE="MASTER_SLAVE"
 java -jar target/redis-0.0.1-SNAPSHOT.jar
 ```
 *  Test the application from a separate terminal window.  This script uses an API call to generate sample banking customers, accounts and transactions.  It uses Spring ASYNC techniques to generate higher load.  A flag chooses between running the transactions pipelined in Redis or in normal non-pipelined method.
