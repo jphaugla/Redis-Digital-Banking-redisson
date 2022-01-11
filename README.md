@@ -100,6 +100,8 @@ mvn package
 source ./scripts/setEnv.sh
 ```
   * alternatively, these are the commands
+One "learning" on the redisson yaml:  the password must be the same on all the redis databases whether they are primary or secondary.
+There is only one password parameter and you cannot use the ":password" embedded in the URL to to add the password
 ```bash
 export REDIS_CONNECTION="redis://127.0.0.1:6379"
 export REDIS_REPLICA1="redis://127.0.0.1:6380"
