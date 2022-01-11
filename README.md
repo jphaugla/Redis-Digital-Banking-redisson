@@ -83,7 +83,7 @@ docker stop bankapp
 sudo apt-get install maven
 sudo apt-get install default-jdk
 ```
-1. Pull this github into a directory
+* Pull this github into a directory
 ```bash
 git clone https://github.com/jphaugla/Redisearch-Digital-Banking.git
 ```
@@ -99,7 +99,8 @@ mvn package
 ```bash
 source ./scripts/setEnv.sh
 ```
-  * alternatively, these are the commands
+* alternatively, these are the commands
+
 One "learning" on the redisson yaml:  the password must be the same on all the redis databases whether they are primary or secondary.
 There is only one password parameter and you cannot use the ":password" embedded in the URL to to add the password
 ```bash
