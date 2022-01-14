@@ -1,5 +1,7 @@
 package com.jphaugla.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -14,6 +16,9 @@ import com.jphaugla.domain.*;
 import com.jphaugla.repository.*;
 
 import org.joda.time.DateTime;
+import org.redisson.Redisson;
+import org.redisson.api.*;
+import org.redisson.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -407,6 +412,24 @@ public class BankService {
 		logger.info("Finished writing " + noOfRecords + " created in " +
 				pipelineTimer.getTimeTakenSeconds() + " seconds.");
 		return "Done";
+	}
+
+	public void redissonTransaction() throws IOException {
+			// connects to 127.0.0.1:6379 by default
+		    Config config = Config.fromYAML(new File("src/main/resources/redisson-replica.yaml"));
+			RedissonClient redisson = Redisson.create();
+
+			RBucket<String> b = redisson.getBucket("test");
+			b.set("123");
+
+			RTransaction transaction = redisson.createTransaction(TransactionOptions.defaults());
+			RBucket<String> bucket = transaction.getBucket("test");
+			bucket.set("234");
+
+			RMap<String, String> map = transaction.getMap("myMap");
+			map.put("1", "2");
+
+			transaction.commit();
 	}
 
 	public  String generateData(Integer noOfCustomers, Integer noOfTransactions, Integer noOfDays,

@@ -1,5 +1,6 @@
 package com.jphaugla.controller;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -52,6 +53,16 @@ public class BankingController {
 			throws ParseException, ExecutionException, InterruptedException, IllegalAccessException {
 
 		bankService.generateData(noOfCustomers, noOfTransactions, noOfDays, key_suffix, pipelined);
+
+		return "Done";
+	}
+
+	@GetMapping("/generateRedisson")
+	@ResponseBody
+	public String generateRedisson ()
+			throws ParseException, ExecutionException, InterruptedException, IllegalAccessException, IOException {
+
+		bankService.redissonTransaction();
 
 		return "Done";
 	}
