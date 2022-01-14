@@ -2,6 +2,7 @@ masterSlaveServersConfig:
   masterAddress: ${REDIS_CONNECTION}
   readMode: ${READ_MODE}
   subscriptionMode: "SLAVE"
+  password: ${REDIS_PASSWORD}
   slaveAddresses:
     - ${REDIS_REPLICA1}
     - ${REDIS_REPLICA2}
