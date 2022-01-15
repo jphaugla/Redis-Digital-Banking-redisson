@@ -62,6 +62,9 @@ public class BankService {
 
 	@Value("${app.transactionSearchIndexName}")
 	private String transactionSearchIndexName;
+	@Autowired
+	private @Value("${app.redissonYamlPath}")
+	String redissonYamlPath;
 
 	private static final Logger logger = LoggerFactory.getLogger(BankService.class);
 
@@ -416,12 +419,15 @@ public class BankService {
 
 	public void redissonTransaction() throws IOException {
 			// connects to 127.0.0.1:6379 by default
-		    Config config = Config.fromYAML(new File("src/main/resources/redisson-replica.yaml"));
-			RedissonClient redisson = Redisson.create();
+		    logger.info("redissonYamlPath is " + redissonYamlPath);
+		    Config config = Config.fromYAML(new File(redissonYamlPath));
+			RedissonClient redisson = Redisson.create(config);
 
+			logger.info("regualar redis write ");
 			RBucket<String> b = redisson.getBucket("test");
 			b.set("123");
 
+			logger.info("transaction redis write ");
 			RTransaction transaction = redisson.createTransaction(TransactionOptions.defaults());
 			RBucket<String> bucket = transaction.getBucket("test");
 			bucket.set("234");
@@ -430,6 +436,14 @@ public class BankService {
 			map.put("1", "2");
 
 			transaction.commit();
+
+			logger.info("transaction redis wait ");
+			RBatch batch = redisson.createBatch(BatchOptions.defaults());
+			batch.getMap("batch1").fastPutAsync("1", "2");
+			batch.getMap("batch2").fastPutAsync("2", "3");
+			batch.getMap("batch3").putAsync("2", "5");
+			BatchResult res = batch.execute();
+			// logger.info("res is " + res);
 	}
 
 	public  String generateData(Integer noOfCustomers, Integer noOfTransactions, Integer noOfDays,

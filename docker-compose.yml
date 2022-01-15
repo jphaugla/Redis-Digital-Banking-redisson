@@ -7,7 +7,7 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
-    command: --requirepass ${REDIS_PASSWORD}
+    command: --requirepass ps2kpXjk
     volumes:
       - ./redis_data1:/data
     environment:
@@ -19,7 +19,7 @@ services:
     container_name: redis2
     ports:
       - "6380:6380"
-    command: --port 6380 --slaveof redis 6379 --requirepass ${REDIS_PASSWORD}
+    command: --port 6380 --replicaof redis 6379 --masterauth ps2kpXjk --requirepass ps2kpXjk
     volumes:
       - ./redis_data2:/data
     environment:
@@ -31,7 +31,7 @@ services:
     container_name: redis3
     ports:
       - "6381:6381"
-    command: --port 6381 --slaveof redis 6379 --requirepass ${REDIS_PASSWORD}
+    command: --port 6381 --replicaof redis 6379 --masterauth ps2kpXjk --requirepass ps2kpXjk
     volumes:
       - ./redis_data3:/data
     environment:
@@ -63,8 +63,9 @@ services:
       - REDIS_REPLICA1="redis://redis2:6380"
       - REDIS_REPLICA2="redis://redis3:6381"
       - CORE_POOLSIZE=20
-      - READ_MODE="MASTER_SLAVE"
+      - READ_MODE=MASTER_SLAVE
       - REDIS_PASSWORD=ps2kpXjk
+      - REDISSON_YAML_PATH=/etc/redisson-replica-vars.yaml
     depends_on:
       - redis
       - redis1

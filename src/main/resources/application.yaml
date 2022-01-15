@@ -10,6 +10,7 @@ app:
   ratingStars: '5'
   numberOfRatings: '5000'
   corePoolSize: ${CORE_POOLSIZE}
+  redissonYamlPath: ${REDISSON_YAML_PATH}
 spring:
   redis:
     redisson:
