@@ -127,6 +127,7 @@ These scripts are in ./scripts
   * deleteCustomer.sh (currently not implemented) - delete all customers matching a string
   * generateData.sh - simple API to generate default customer, accounts, merchants, phone numbers, emails and transactions
   * generateLots.sh - for server testing to generate higher load levels.  Use with startAppservers.sh.  Not for use with docker setup.  This is load testing with redis enterprise and client application running in same network in the cloud.
+  * generateRedisson.sh - writes a few commands using a base redisson connection outside of redistemplate
   * getByAccount.sh (currently not implemented) - find transactions for an account between a date range
   * getByCreditCard.sh (currently not implemented) - find transactions for a credit card  between a date range
   * getCustomerByEmails.sh - gets email for customer ids starting from 100001 for the desired range - this is used for generating read load
