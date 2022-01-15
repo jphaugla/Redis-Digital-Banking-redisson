@@ -111,7 +111,10 @@ export REDIS_REPLICA2="redis://127.0.0.1:6381"
 export CORE_POOLSIZE=23
 # this spreads read load across primary and replica shards
 #  setting this to "SLAVE" will only use the 2 replica shards for the reads
-export READ_MODE="MASTER_SLAVE"
+export READ_MODE=MASTER_SLAVE
+export REDIS_PASSWORD=ps2kpXjk
+# this is only needed for running raw redisson with scripts/generateRedisson.sh
+export REDISSON_YAML_PATH=src/main/resources/redisson-replica.yaml
 java -jar target/redis-0.0.1-SNAPSHOT.jar
 ```
 *  Test the application from a separate terminal window.  This script uses an API call to generate sample banking customers, accounts and transactions.  It uses Spring ASYNC techniques to generate higher load.  A flag chooses between running the transactions pipelined in Redis or in normal non-pipelined method.
