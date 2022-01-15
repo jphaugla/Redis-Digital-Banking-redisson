@@ -65,7 +65,9 @@ services:
       - CORE_POOLSIZE=20
       - READ_MODE=MASTER_SLAVE
       - REDIS_PASSWORD=ps2kpXjk
-      - REDISSON_YAML_PATH=/etc/redisson-replica-vars.yaml
+      #  either one works. with vars has the environment variables replaced in file
+      - REDISSON_YAML_PATH=/etc/redisson-replica.yaml
+      # - REDISSON_YAML_PATH=/etc/redisson-replica-vars.yaml
     depends_on:
       - redis
       - redis1
