@@ -7,6 +7,7 @@ Provides a quick-start example of using Redis with springBoot and redisson with 
 
 ## Overview
 In this tutorial, a java spring boot application is run through a jar file to support typical API calls to a REDIS banking data layer.  A redis docker configuration is included.
+Additionally, a version of this with SSL is documented with optional redisson yaml containing ttl
 
 ## Redis and Redisson advantages for Digital Banking
  * Redis easily handles high write transaction volume
@@ -35,7 +36,7 @@ In this tutorial, a java spring boot application is run through a jar file to su
  * [redis-developer lettucemod mesclun](https://github.com/redis-developer/lettucemod)
  * [redisson with spring boot starter](https://github.com/redisson/redisson/tree/master/redisson-spring-boot-starter#2-add-settings-into-applicationsettings-file)
  * [redisson with primary and replica shards](https://redisson.org/glossary/redis-master-slave-replication.html)
-
+ * [Setting up SSL with Redis Enterprise](https://tgrall.github.io/blog/2020/01/02/how-to-use-ssl-slash-tls-with-redis-enterprise/)
 ## Technical Overview
 
 This github java code uses the redisson java library with spring boot starter for redis.   
@@ -169,4 +170,27 @@ These scripts are in ./scripts
 ```
 ```bash
 ./loops.sh getCustomerEmails.sh
+```
+
+## Using redisson with Redis Enterprise and TLS
+
+[This blog helps with TLS configuration with Redis Enterprise](https://tgrall.github.io/blog/2020/01/02/how-to-use-ssl-slash-tls-with-redis-enterprise/)
+
+* change environment variable to use redisson yaml file with SSL
+```bash
+REDISSON_YAML_PATH=src/main/resources/redisson-ssl.yaml
+```
+* generate required keys
+  *  copy in proxy certificate into same ssl folder and name it proxy_cert.pem
+```bash
+cd src/main/resources/ssl
+./generatepems.sh
+./generatekeystore.sh
+./generatetrust.sh
+./importkey.sh
+```
+* package and run application
+```bash
+mvn clean package
+java -jar  target/redis-0.0.1-SNAPSHOT.jar
 ```
