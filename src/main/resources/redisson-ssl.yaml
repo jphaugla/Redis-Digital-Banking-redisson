@@ -1,0 +1,13 @@
+singleServerConfig:
+  address: ${REDIS_CONNECTION}
+  password: ${REDIS_PASSWORD}
+  sslProtocols:
+    - TLSv1.3
+    - TLSv1.2
+    - TLSv1.1
+    - TLSv1
+  sslProvider: JDK
+  sslKeystore: file:./src/main/resources/ssl/client-keystore.p12
+  sslKeystorePassword: jasonrocks
+  sslTruststore: file:./src/main/resources/ssl/client-truststore.p12
+  sslTruststorePassword: jasonrocks

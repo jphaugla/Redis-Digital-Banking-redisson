@@ -1,6 +1,8 @@
 package com.jphaugla.config;
+import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 
+import org.redisson.config.Config;
 import org.redisson.spring.data.connection.RedissonConnectionFactory;
 
 import org.slf4j.Logger;
@@ -29,6 +31,8 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.context.annotation.Bean;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 
 @Configuration
@@ -45,6 +49,16 @@ public class RedisConfig {
     @Autowired
     private @Value("${app.corePoolSize:20}")
     int corePoolSize;
+    @Autowired
+    private @Value("${app.redissonYamlPath}")
+    String redissonYamlPath;
+
+    @Bean
+    public RedissonClient redisson() throws IOException {
+        Config config = Config.fromYAML(new File(redissonYamlPath));
+        RedissonClient redisson = Redisson.create(config);
+        return redisson;
+    }
 
     @Bean
     public RedissonConnectionFactory redissonConnectionFactory(RedissonClient redisson) {
