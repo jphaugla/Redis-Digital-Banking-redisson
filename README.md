@@ -113,7 +113,7 @@ export CORE_POOLSIZE=23
 # this spreads read load across primary and replica shards
 #  setting this to "SLAVE" will only use the 2 replica shards for the reads
 export READ_MODE=MASTER_SLAVE
-export REDIS_PASSWORD=ps2kpXjk
+export REDIS_PASSWORD=somesillypw
 # this is only needed for running raw redisson with scripts/generateRedisson.sh
 export REDISSON_YAML_PATH=src/main/resources/redisson-replica.yaml
 java -jar target/redis-0.0.1-SNAPSHOT.jar
@@ -175,6 +175,8 @@ These scripts are in ./scripts
 ## Using redisson with Redis Enterprise and TLS
 
 [This blog helps with TLS configuration with Redis Enterprise](https://tgrall.github.io/blog/2020/01/02/how-to-use-ssl-slash-tls-with-redis-enterprise/)
+Additional note, instead of using stunnel for testing redis-cli, see command after environment is established
+
 
 * change environment variable to use redisson yaml file with SSL and have extra "s" on redis URI
 ```bash
@@ -188,9 +190,13 @@ export REDISSON_YAML_PATH=src/main/resources/redisson-ssl.yaml
 ```bash
 cd src/main/resources/ssl
 ./generatepems.sh
+# must type in passwords matching the environment variables when prompted below
 ./generatekeystore.sh
 ./generatetrust.sh
 ./importkey.sh
+```
+```bash
+redis-cli -u $REDIS_CONNECTION --tls --cacert src/main/resources/ssl/proxy_cert.pem --cert src/main/resources/ssl/client_cert_app_001.pem --key  src/main/resources/ssl/client_key_app_001.pem -a $REDIS_PASSWORD
 ```
 * package and run application
 ```bash
