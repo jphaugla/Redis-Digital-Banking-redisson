@@ -3,6 +3,6 @@ keytool -genkey \
   -alias truststorekey \
   -keyalg RSA \
   -keystore ./client-truststore.p12 \
-  -keypass jasonrocks \
-  -storepass jasonrocks \
+  -keypass somesillypw \
+  -storepass somesillypw \
   -storetype pkcs12
