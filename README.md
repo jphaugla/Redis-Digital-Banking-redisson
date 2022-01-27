@@ -176,9 +176,12 @@ These scripts are in ./scripts
 
 [This blog helps with TLS configuration with Redis Enterprise](https://tgrall.github.io/blog/2020/01/02/how-to-use-ssl-slash-tls-with-redis-enterprise/)
 
-* change environment variable to use redisson yaml file with SSL
+* change environment variable to use redisson yaml file with SSL and have extra "s" on redis URI
 ```bash
-REDISSON_YAML_PATH=src/main/resources/redisson-ssl.yaml
+export KEYSTORE_PASSWORD=sillyPassword
+export TRUSTSTORE_PASSWORD=sillyPassword
+export REDIS_CONNECTION="rediss://localhost:6379"
+export REDISSON_YAML_PATH=src/main/resources/redisson-ssl.yaml
 ```
 * generate required keys
   *  copy in proxy certificate into same ssl folder and name it proxy_cert.pem

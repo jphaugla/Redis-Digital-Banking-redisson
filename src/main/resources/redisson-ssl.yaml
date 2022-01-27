@@ -8,6 +8,6 @@ singleServerConfig:
     - TLSv1
   sslProvider: JDK
   sslKeystore: file:./src/main/resources/ssl/client-keystore.p12
-  sslKeystorePassword: somsillypw
+  sslKeystorePassword: ${KEYSTORE_PASSWORD}
   sslTruststore: file:./src/main/resources/ssl/client-truststore.p12
-  sslTruststorePassword: somsillypw
+  sslTruststorePassword: ${TRUSTSTORE_PASSWORD}
