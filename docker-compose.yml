@@ -59,6 +59,7 @@ services:
     volumes:
       - "./app/:/usr/src/app"
     environment:
+      # - REDIS_CONNECTION="redis://rediss:6379"
       - REDIS_CONNECTION="redis://redis:6379"
       - REDIS_REPLICA1="redis://redis2:6380"
       - REDIS_REPLICA2="redis://redis3:6381"
@@ -68,6 +69,8 @@ services:
       #  either one works. with vars has the environment variables replaced in file
       - REDISSON_YAML_PATH=/etc/redisson-replica.yaml
       # - REDISSON_YAML_PATH=/etc/redisson-replica-vars.yaml
+      #  single instance with SSL configured
+      # - REDISSON_YAML_PATH=/etc/redisson-ssl.yaml
     depends_on:
       - redis
       - redis1

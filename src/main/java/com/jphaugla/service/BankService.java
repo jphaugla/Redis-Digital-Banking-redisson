@@ -423,7 +423,7 @@ public class BankService {
 		    Config config = Config.fromYAML(new File(redissonYamlPath));
 			RedissonClient redisson = Redisson.create(config);
 
-			logger.info("regualar redis write ");
+			logger.info("regular redis write ");
 			RBucket<String> b = redisson.getBucket("test");
 			b.set("123");
 

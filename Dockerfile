@@ -10,5 +10,7 @@ RUN apt-get update && \
 COPY --from=build /usr/src/app/target/redis-0.0.1-SNAPSHOT.jar /usr/app/redis-0.0.1-SNAPSHOT.jar
 COPY --from=build /usr/src/app/src/main/resources/runApplication.sh /usr/app/runApplication.sh
 COPY --from=build /usr/src/app/src/main/resources/redisson-replica.yaml /etc
+COPY --from=build /usr/src/app/src/main/resources/redisson-ssl.yaml /etc
+COPY --from=build /usr/src/app/src/main/resources/redisson.yaml /etc
 EXPOSE 8080
 ENTRYPOINT ["/usr/app/runApplication.sh"]

@@ -7,6 +7,7 @@ Provides a quick-start example of using Redis with springBoot and redisson with 
 
 ## Overview
 In this tutorial, a java spring boot application is run through a jar file to support typical API calls to a REDIS banking data layer.  A redis docker configuration is included.
+Additionally, a version of this with SSL is documented with optional redisson yaml containing ttl
 
 ## Redis and Redisson advantages for Digital Banking
  * Redis easily handles high write transaction volume
@@ -35,7 +36,7 @@ In this tutorial, a java spring boot application is run through a jar file to su
  * [redis-developer lettucemod mesclun](https://github.com/redis-developer/lettucemod)
  * [redisson with spring boot starter](https://github.com/redisson/redisson/tree/master/redisson-spring-boot-starter#2-add-settings-into-applicationsettings-file)
  * [redisson with primary and replica shards](https://redisson.org/glossary/redis-master-slave-replication.html)
-
+ * [Setting up SSL with Redis Enterprise](https://tgrall.github.io/blog/2020/01/02/how-to-use-ssl-slash-tls-with-redis-enterprise/)
 ## Technical Overview
 
 This github java code uses the redisson java library with spring boot starter for redis.   
@@ -112,7 +113,7 @@ export CORE_POOLSIZE=23
 # this spreads read load across primary and replica shards
 #  setting this to "SLAVE" will only use the 2 replica shards for the reads
 export READ_MODE=MASTER_SLAVE
-export REDIS_PASSWORD=ps2kpXjk
+export REDIS_PASSWORD=somesillypw
 # this is only needed for running raw redisson with scripts/generateRedisson.sh
 export REDISSON_YAML_PATH=src/main/resources/redisson-replica.yaml
 java -jar target/redis-0.0.1-SNAPSHOT.jar
@@ -169,4 +170,36 @@ These scripts are in ./scripts
 ```
 ```bash
 ./loops.sh getCustomerEmails.sh
+```
+
+## Using redisson with Redis Enterprise and TLS
+
+[This blog helps with TLS configuration with Redis Enterprise](https://tgrall.github.io/blog/2020/01/02/how-to-use-ssl-slash-tls-with-redis-enterprise/)
+Additional note, instead of using stunnel for testing redis-cli, see command after environment is established
+
+
+* change environment variable to use redisson yaml file with SSL and have extra "s" on redis URI
+```bash
+export KEYSTORE_PASSWORD=sillyPassword
+export TRUSTSTORE_PASSWORD=sillyPassword
+export REDIS_CONNECTION="rediss://localhost:6379"
+export REDISSON_YAML_PATH=src/main/resources/redisson-ssl.yaml
+```
+* generate required keys
+  *  copy in proxy certificate into same ssl folder and name it proxy_cert.pem
+```bash
+cd src/main/resources/ssl
+./generatepems.sh
+# must type in passwords matching the environment variables when prompted below
+./generatekeystore.sh
+./generatetrust.sh
+./importkey.sh
+```
+```bash
+redis-cli -u $REDIS_CONNECTION --tls --cacert src/main/resources/ssl/proxy_cert.pem --cert src/main/resources/ssl/client_cert_app_001.pem --key  src/main/resources/ssl/client_key_app_001.pem -a $REDIS_PASSWORD
+```
+* package and run application
+```bash
+mvn clean package
+java -jar  target/redis-0.0.1-SNAPSHOT.jar
 ```
