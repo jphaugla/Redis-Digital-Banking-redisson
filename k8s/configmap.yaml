@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bankapp-config
+  labels:
+    app: bankapp
+    tier: postgres
+data:
+  REDIS_CONNECTION: "redis://10.71.52.158:14376"
+  REDIS_REPLICA1: "redis://10.71.61.77:15541"
+  REDIS_REPLICA2: "redis://10.71.53.43:13850"
+  CORE_POOLSIZE: "20"
+  READ_MODE: MASTER_SLAVE
+  REDIS_PASSWORD: Q31jQLv4
+  REDISSON_YAML_PATH: /etc/redisson-replica.yaml
+

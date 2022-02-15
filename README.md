@@ -16,13 +16,18 @@ Additionally, a version of this with SSL is documented with optional redisson ya
  * Redisearch 2.0 automatically indexes the hash structure created by Spring Java CRUD repository
  * Redisson will use read replicas to distribute the read workload across a primary and multiple replicas
 
-## Requirements
+## Deployment options 
+### Run on local machine with docker
 * Docker installed on your local system, see [Docker Installation Instructions](https://docs.docker.com/engine/installation/).
-* Alternatively, can run Redis Enterprise and set the redis host and port in the application.properties file
+* Can run docker using application in docker hub (commented out in docker-compose.yaml)
 * When using Docker for Mac or Docker for Windows, the default resources allocated to the linux VM running docker are 2GB RAM and 2 CPU's. Make sure to adjust these resources to meet the resource requirements for the containers you will be running. More information can be found here on adjusting the resources allocated to docker.
-
 [Docker for mac](https://docs.docker.com/docker-for-mac/#advanced)
 [Docker for windows](https://docs.docker.com/docker-for-windows/#advanced)
+### Run on local machine without docker
+* Still run the redis on docker but run the application in intelli4j or from jar command
+* Must set environment variables
+### Run docker hub container and redis enterprise on kubernetes
+* Yaml files provided
 
 ## Links that help!
 
@@ -37,9 +42,11 @@ Additionally, a version of this with SSL is documented with optional redisson ya
  * [redisson with spring boot starter](https://github.com/redisson/redisson/tree/master/redisson-spring-boot-starter#2-add-settings-into-applicationsettings-file)
  * [redisson with primary and replica shards](https://redisson.org/glossary/redis-master-slave-replication.html)
  * [Setting up SSL with Redis Enterprise](https://tgrall.github.io/blog/2020/01/02/how-to-use-ssl-slash-tls-with-redis-enterprise/)
+ * [Kubernetes Install Redis Enterprise](https://github.com/RedisLabs/redis-enterprise-k8s-docs#installation)
+
 ## Technical Overview
 
-This github java code uses the redisson java library with spring boot starter for redis.   
+This github java code uses the redisson java library with spring boot starter for redis.  
 
 ### The spring java code
 This is basic spring links
@@ -124,6 +131,64 @@ java -jar target/redis-0.0.1-SNAPSHOT.jar
 ```
 Shows a benchmark test run of  generateData.sh on GCP servers.  Although, this test run is using redisearch 1.0 code base.  Need to rerun this test.
 <a href="" rel="Generate Data Benchmark"><img src="images/Benchmark.png" alt="" /></a>
+
+## Deploy on Redis on Kubernetes
+* Follow [Redis Enterprise k8s installation instructions](https://github.com/RedisLabs/redis-enterprise-k8s-docs#installation) all the way through-no need in demo to do the more complex webhook parts of step 5.  A yaml file for step 6 is created so don't perform step 6 in the instructions.
+* Instead of doing the above step 5, use the file in the repository
+```bash
+# create primary database
+cd k8s
+kubectl apply -f redis-enterprise-database.yml
+```
+* Since the other two databases need to be replicas of the primary database, get the secret for the primary database URI
+  * use port forwarding to access the redis cluster 
+```bash
+kubectl port-forward service/rec-ui 8443:8443
+```
+* from chrome or firefox browser, [https://localhost:8443](https://localhost:8443)
+* to log in, the cluster username and password will be needed
+```bash
+./getClusterUnPw.sh
+```
+* log in with retrieved username and password
+* Click on databases tab
+* click on the newly created database
+* Click on the *Get Replica of source URL" and copy it to the clipboard
+* <a href="" rel="Generate Data Benchmark"><img src="images/getreplicaURL.png" alt="" /></a>
+* this URL needs to be turned into a secret using base64.  Substitute the captured uri for this uri
+```bash
+echo redis://admin:Cl5rhnQcAXTK21JKxxxxxxxxxFnLPjKIZy89CsqAABTKOK3v@redis-14376.rec.demo.svc.cluster.local:14376 |base64
+```
+* paste this secret into the urlSecret.yml file replacing the existing secret
+* create this secret
+```bash
+kubectl apply urlSecret.yml
+```
+* the other two database files can now be applied.
+  * NOTE:  the database secret name for redis2 and redis3 are changed to be the same secret that was automatically created for the primary database.  This was done because redisson only has one parameter for database password so all have to be the same
+  * redis2 and redis3 also use the secret created above for the primary database uri
+```bash
+kubectl apply -f redis2.yml
+kubectl apply -f redis3.yml
+```
+
+## Deploy bankapp on Kubernetes
+* modify, create the environmental variables by editing configmap.yml
+  * can find the IP addresses and ports for each of the databases by running ```kubectl get services```
+  * put the database password in for the redis password by running ```getDatabasePw```
+* create the configuration map
+```bash
+kubectl apply -f configmap.yaml 
+```
+* deploy the bankapp
+```bash
+kubectl apply -f bankapp.yml
+```
+* port forward and continue with testing of the APIs
+```bash
+kubectl port-forward service/redis-bankapp-service 8080:8080
+```
+* can also use port forwarding to redis-cli to each of the 3 databases
 
 ##  Investigate the APIs 
 These scripts are in ./scripts

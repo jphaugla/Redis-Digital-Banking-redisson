@@ -1,0 +1,10 @@
+apiVersion: app.redislabs.com/v1alpha1
+kind: RedisEnterpriseDatabase
+metadata:
+  name: redis-3
+spec:
+  memorySize: 500MB
+  databaseSecretName: redb-redis-enterprise-database
+  replicaSources:
+  - replicaSourceType: SECRET
+    replicaSourceName: redb-masterdb-uri

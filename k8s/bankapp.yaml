@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-bankapp # deployment name
+  labels:
+    app: redis-bankapp # deployment label
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-bankapp # which pods is the deployment managing, as defined by the pod template
+  template: # pod template
+    metadata:
+      labels:
+        app: redis-bankapp 
+    spec:  
+      containers:
+      - name:  redis-bankapp  # Container name 
+        image: jphaugla/bankapp:latest #repo/image:tag
+        imagePullPolicy: Always 
+        ports:  
+         - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: bankapp-config
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-bankapp-service       # name should not be 'redis-lb' 
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: redis-bankapp
+---
