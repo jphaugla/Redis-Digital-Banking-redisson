@@ -133,6 +133,7 @@ Shows a benchmark test run of  generateData.sh on GCP servers.  Although, this t
 <a href="" rel="Generate Data Benchmark"><img src="images/Benchmark.png" alt="" /></a>
 
 ## Deploy on Redis on Kubernetes
+* One option is GKE cluster, use at least e2-standard-4 nodes
 * Follow [Redis Enterprise k8s installation instructions](https://github.com/RedisLabs/redis-enterprise-k8s-docs#installation) all the way through-no need in demo to do the more complex webhook parts of step 5.  A yaml file for step 6 is created so don't perform step 6 in the instructions.
 * Instead of doing the above step 5, use the file in the repository
 ```bash
@@ -153,6 +154,7 @@ kubectl port-forward service/rec-ui 8443:8443
 * log in with retrieved username and password
 * Click on databases tab
 * click on the newly created database
+# click on the Configuration tab
 * Click on the *Get Replica of source URL" and copy it to the clipboard
 * <a href="" rel="Generate Data Benchmark"><img src="images/getreplicaURL.png" alt="" /></a>
 * this URL needs to be turned into a secret using base64.  Substitute the captured uri for this uri

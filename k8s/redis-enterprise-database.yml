@@ -4,3 +4,4 @@ metadata:
   name: redis-enterprise-database
 spec:
   memorySize: 500MB
+  persistence: "snapshotEvery1Hour"

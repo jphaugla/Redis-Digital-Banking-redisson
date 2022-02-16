@@ -8,3 +8,4 @@ spec:
   replicaSources:
   - replicaSourceType: SECRET
     replicaSourceName: redb-masterdb-uri
+  persistence: "snapshotEvery1Hour"
