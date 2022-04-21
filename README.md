@@ -134,8 +134,9 @@ Shows a benchmark test run of  generateData.sh on GCP servers.  Although, this t
 
 ## Deploy on Redis on Kubernetes
 * One option is GKE cluster, use at least e2-standard-4 nodes
-* Follow [Redis Enterprise k8s installation instructions](https://github.com/RedisLabs/redis-enterprise-k8s-docs#installation) all the way through-no need in demo to do the more complex webhook parts of step 5.  A yaml file for step 6 is created so don't perform step 6 in the instructions.
-* Instead of doing the above step 5, use the file in the repository
+* Follow [Redis Enterprise k8s installation instructions](https://github.com/RedisLabs/redis-enterprise-k8s-docs#installation) all the way through to step 4.  
+* For Step 5, the adminssion controller steps are recomended but the webhook instructions are probably not necessary
+* Don't do Step 6 as the databases for this github are in the k8s subdirectory of this githuba
 ```bash
 # create primary database
 cd k8s
@@ -161,10 +162,10 @@ kubectl port-forward service/rec-ui 8443:8443
 ```bash
 echo redis://admin:Cl5rhnQcAXTK21JKxxxxxxxxxFnLPjKIZy89CsqAABTKOK3v@redis-14376.rec.demo.svc.cluster.local:14376 |base64
 ```
-* paste this secret into the urlSecret.yml file replacing the existing secret
+* paste this secret into the urlSecret.yml file replacing the existing secret value behind the "uri:" key
 * create this secret
 ```bash
-kubectl apply urlSecret.yml
+kubectl apply -f urlSecret.yml
 ```
 * the other two database files can now be applied.
   * NOTE:  the database secret name for redis2 and redis3 are changed to be the same secret that was automatically created for the primary database.  This was done because redisson only has one parameter for database password so all have to be the same
@@ -175,6 +176,10 @@ kubectl apply -f redis3.yml
 ```
 
 ## Deploy bankapp on Kubernetes
+* must log into docker to have access to the docker image
+```bash
+docker login
+```
 * modify, create the environmental variables by editing configmap.yml
   * can find the IP addresses and ports for each of the databases by running ```kubectl get services```
   * put the database password in for the redis password by running ```getDatabasePw```
