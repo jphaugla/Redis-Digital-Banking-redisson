@@ -34,9 +34,10 @@ public class redissonStress {
 			// writeNumbers(redissonClient, number_to_write);
 			writeAddressMap(redissonClient, number_to_write);
 			readAddressMap(redissonClient, number_to_write, number_to_read);
-			// writeLocalCache(redissonClient, number_to_write);
-			// readLocalCache(redissonClient, number_to_write, number_to_read);
-			//  writeReadLocalCache(redissonClient, number_to_write, number_to_read);
+			//
+			writeLocalCache(redissonClient, number_to_write);
+			readLocalCache(redissonClient, number_to_write, number_to_read);
+			// writeReadLocalCache(redissonClient, number_to_write, number_to_read);
 			
 
 		}catch(Exception e) {
@@ -95,7 +96,7 @@ public class redissonStress {
 			   .evictionPolicy(LocalCachedMapOptions.EvictionPolicy.NONE)
 
 			   // If cache size is 0 then local cache is unbounded.
-			   .cacheSize(2000)
+			   .cacheSize(0)
 
 			   // Defines strategy for load missed local cache updates after Redis connection failure.
 			   //
@@ -168,13 +169,13 @@ public class redissonStress {
 			String person_index = "Person:Cached:" + person_numeric;
 			RLocalCachedMap<String, String> map = redissonClient.getLocalCachedMap(person_index, getOptions());
 			Map<String, String> cache = map.getCachedMap();
-			first_name = cache.get("FirstName");
+			first_name = map.get("FirstName");
 			// middle_name = map.get("MiddleName");
 			// last_name = map.get("LastName");
 			// position = map.get("Position");
 			// age_string = map.get("age");
 			// age = Integer.parseInt(age_string);
-			System.out.println(" reading readLocalCache " + person_index + " got first_name " + first_name);
+			// System.out.println(" reading readLocalCache " + person_index + " got first_name " + first_name);
 		}
 		timer.end();
 		System.out.println("Finished readLocalCache Map reading " + number_to_read + " completed in " +
@@ -254,7 +255,7 @@ public class redissonStress {
 
 		timer.end();
 		System.out.println("Finished writing writeLocalCache " + number_to_write + " created in " +
-				timer.getTimeTakenMillis() + " seconds.");
+				timer.getTimeTakenMillis() + " milli seconds.");
    }
 
 	private static void writeMap(RedissonClient redissonClient) {
