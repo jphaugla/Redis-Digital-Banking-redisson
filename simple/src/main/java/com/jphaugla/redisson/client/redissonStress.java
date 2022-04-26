@@ -115,7 +115,7 @@ public class redissonStress {
 			   // INVALIDATE - Default. Invalidate cache entry across all LocalCachedMap instances on map entry change
 			   // UPDATE - Insert/update cache entry across all LocalCachedMap instances on map entry change
 			   // NONE - No synchronizations on map changes
-			   .syncStrategy(LocalCachedMapOptions.SyncStrategy.INVALIDATE)
+			   .syncStrategy(LocalCachedMapOptions.SyncStrategy.NONE)
 
 			   // or
 			   .timeToLive(100, TimeUnit.SECONDS)
