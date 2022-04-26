@@ -3,4 +3,3 @@ singleServerConfig:
   password: ${REDIS_PASSWORD}
   subscriptionsPerConnection: 10
   subscriptionConnectionPoolSize: 500
-registrationKey: kOS6IfdstylnKevPUQ7f33uev5AUfSBiu5nPXrbmfsS3qmAjPrZk0jRUZ9qGvHDAbnMbRXH3TKE0Uo6nfBkKbJJztHWLcexhR0wjH9l1cGQ9w45r0KEA9GW8gFNaFWqK/gaIN+aA3gBrlq2GSDKRX1qO104Z6rgf967gCize+ZY=
