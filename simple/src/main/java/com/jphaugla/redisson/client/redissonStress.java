@@ -36,8 +36,8 @@ public class redissonStress {
 			// readAddressMap(redissonClient, number_to_write, number_to_read);
 			//
 			writeLocalCache(redissonClient, number_to_write);
+			// TimeUnit.SECONDS.sleep(5);
 			readLocalCache(redissonClient, number_to_write, number_to_read);
-			// writeReadLocalCache(redissonClient, number_to_write, number_to_read);
 			// cacheExample(redissonClient);
 			
 
@@ -116,7 +116,7 @@ public class redissonStress {
 			   // INVALIDATE - Default. Invalidate cache entry across all LocalCachedMap instances on map entry change
 			   // UPDATE - Insert/update cache entry across all LocalCachedMap instances on map entry change
 			   // NONE - No synchronizations on map changes
-			   .syncStrategy(LocalCachedMapOptions.SyncStrategy.NONE)
+			   .syncStrategy(LocalCachedMapOptions.SyncStrategy.UPDATE)
 
 			   // or
 			   .timeToLive(100, TimeUnit.SECONDS)
@@ -169,8 +169,6 @@ public class redissonStress {
 
 			int person_numeric = getRandomNumber(0,number_available-1);
 			String person_string = String.valueOf(person_numeric);
-			// String person_index = "Person:Cached:" + person_numeric;
-			// RLocalCachedMap<String, String> map = redissonClient.getLocalCachedMap(person_index, getOptions());
 			Map<String, String> localMap = maps.get(person_numeric);
 			// cache.values();
 			first_name = localMap.get("FirstName");
@@ -181,7 +179,7 @@ public class redissonStress {
 			// position = map.get("Position");
 			// age_string = map.get("age");
 			// age = Integer.parseInt(age_string);
-			// System.out.println(" reading readLocalCache index " + person_string + " localMap.size " + String.valueOf(localMap.size()) + " first name " + localMap.get("FirstName"));
+			System.out.println(" reading readLocalCache index " + person_string + " localMap.size " + String.valueOf(localMap.size()) + " first name " + localMap.get("FirstName"));
 		}
 		timer.end();
 		System.out.println("Finished readLocalCache Map reading " + number_to_read + " completed in " +
@@ -192,56 +190,7 @@ public class redissonStress {
 		return (int) ((Math.random() * (max - min)) + min);
 	}
 
-	private static void writeReadLocalCache(RedissonClient redissonClient, int number_to_write, int number_to_read) {
-		Timer timer = new Timer();
-		System.out.println("Started writeReadLocalCache");
-		for (int i =0; i < number_to_write; i++) {
-
-			String stringValue = String.valueOf(i);
-			String person_index = "Person:Cached:" + String.valueOf(i);
-			RLocalCachedMap<String, String> map =  redissonClient.getLocalCachedMap(person_index, getOptions());
-			Map<String, String> cache = map.getCachedMap();
-			map.fastPut ("FirstName", "jason" + stringValue);
-			map.fastPut("MiddleName", "oliver" + stringValue);
-			map.fastPut ("LastName", "haugland" + stringValue);
-			map.fastPut ("Position", "Employee");
-			int age = 25 + (i / 2);
-			String age_string = String.valueOf(age);
-			map.fastPut ("age", age_string);
-		}
-
-		timer.end();
-		System.out.println("Finished writing in writeReadLocalCache " + number_to_write + " created in " +
-				timer.getTimeTakenMillis() + " seconds.");
-		System.out.println("Started readLocalCache");
-		Timer timer2 = new Timer();
-		String first_name = "";
-		String middle_name = "";
-		String last_name = "";
-		String position ="";
-		int age = 0;
-		String age_string = "";
-
-		for (int i =0; i < number_to_read; i++) {
-
-			String person_numeric = String.valueOf(getRandomNumber(0,number_to_write-1));
-			String person_index = "Person:Cached:" + person_numeric;
-			RLocalCachedMap<String, String> map = redissonClient.getLocalCachedMap(person_index, LocalCachedMapOptions.defaults());
-			Map<String, String> cache = map.getCachedMap();
-			first_name = map.get("FirstName");
-			// middle_name = map.get("MiddleName");
-			// last_name = map.get("LastName");
-			// position = map.get("Position");
-			// age_string = map.get("age");
-			// age = Integer.parseInt(age_string);
-			// System.out.println(" reading readLocalCache " + person_index + " got first_name " + first_name);
-		}
-		timer2.end();
-		System.out.println("Finished readLocalCache Map reading " + number_to_read + " completed in " +
-				timer2.getTimeTakenMillis() + " milli seconds.");
-	}
-
-   private static void writeLocalCache(RedissonClient redissonClient, int number_to_write) {
+    private static void writeLocalCache(RedissonClient redissonClient, int number_to_write) {
 		Timer timer = new Timer();
 	    System.out.println("Started writeLocalCache");
 	    for (int i =0; i < number_to_write; i++) {
@@ -282,6 +231,7 @@ public class redissonStress {
 		Integer valueSize = map.valueSize("c");
 		// System.out.println("map valueSize for C " + valueSize.toString());
 	}
+
 	private static void writeNumbers(RedissonClient redissonClient, int number_to_write) {
 		RList<Integer> numbers = redissonClient.getList("numbers");
 		numbers.delete();
@@ -290,6 +240,7 @@ public class redissonStress {
 
 		System.out.println(numbers.readAll());
 	}
+
 	private static void cacheExample(RedissonClient redissonClient) {
 
 		LocalCachedMapOptions options = LocalCachedMapOptions.defaults()
