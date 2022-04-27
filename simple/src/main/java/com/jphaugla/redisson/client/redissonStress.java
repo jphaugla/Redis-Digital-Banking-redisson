@@ -6,7 +6,7 @@ import org.redisson.api.*;
 import org.redisson.config.Config;
 
 import java.io.File;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public class redissonStress {
-	
+	private static List<Map<String,String>> maps = new ArrayList<Map<String,String>>();
 	public static void main(String[] args) {
 		
 		RedissonClient redissonClient = null;
@@ -32,12 +32,13 @@ public class redissonStress {
 			redissonClient = Redisson.create(config);
 
 			// writeNumbers(redissonClient, number_to_write);
-			writeAddressMap(redissonClient, number_to_write);
-			readAddressMap(redissonClient, number_to_write, number_to_read);
+			// writeAddressMap(redissonClient, number_to_write);
+			// readAddressMap(redissonClient, number_to_write, number_to_read);
 			//
 			writeLocalCache(redissonClient, number_to_write);
 			readLocalCache(redissonClient, number_to_write, number_to_read);
 			// writeReadLocalCache(redissonClient, number_to_write, number_to_read);
+			// cacheExample(redissonClient);
 			
 
 		}catch(Exception e) {
@@ -96,7 +97,7 @@ public class redissonStress {
 			   .evictionPolicy(LocalCachedMapOptions.EvictionPolicy.NONE)
 
 			   // If cache size is 0 then local cache is unbounded.
-			   .cacheSize(0)
+			   .cacheSize(100000)
 
 			   // Defines strategy for load missed local cache updates after Redis connection failure.
 			   //
@@ -162,24 +163,29 @@ public class redissonStress {
 		String position ="";
 		int age = 0;
 		String age_string = "";
+		int null_count = 0;
 
 		for (int i =0; i < number_to_read; i++) {
 
-			String person_numeric = String.valueOf(getRandomNumber(0,number_available-1));
-			String person_index = "Person:Cached:" + person_numeric;
-			RLocalCachedMap<String, String> map = redissonClient.getLocalCachedMap(person_index, getOptions());
-			Map<String, String> cache = map.getCachedMap();
-			first_name = map.get("FirstName");
+			int person_numeric = getRandomNumber(0,number_available-1);
+			String person_string = String.valueOf(person_numeric);
+			// String person_index = "Person:Cached:" + person_numeric;
+			// RLocalCachedMap<String, String> map = redissonClient.getLocalCachedMap(person_index, getOptions());
+			Map<String, String> localMap = maps.get(person_numeric);
+			// cache.values();
+			first_name = localMap.get("FirstName");
+
+			if(first_name == null) null_count++;
 			// middle_name = map.get("MiddleName");
 			// last_name = map.get("LastName");
 			// position = map.get("Position");
 			// age_string = map.get("age");
 			// age = Integer.parseInt(age_string);
-			// System.out.println(" reading readLocalCache " + person_index + " got first_name " + first_name);
+			// System.out.println(" reading readLocalCache index " + person_string + " localMap.size " + String.valueOf(localMap.size()) + " first name " + localMap.get("FirstName"));
 		}
 		timer.end();
 		System.out.println("Finished readLocalCache Map reading " + number_to_read + " completed in " +
-				timer.getTimeTakenMillis() + " milli seconds.");
+				timer.getTimeTakenMillis() + " milli seconds. null count is " + null_count);
 
 	}
 	public static int getRandomNumber(int min, int max) {
@@ -220,7 +226,7 @@ public class redissonStress {
 
 			String person_numeric = String.valueOf(getRandomNumber(0,number_to_write-1));
 			String person_index = "Person:Cached:" + person_numeric;
-			RLocalCachedMap<String, String> map = redissonClient.getLocalCachedMap(person_index, getOptions());
+			RLocalCachedMap<String, String> map = redissonClient.getLocalCachedMap(person_index, LocalCachedMapOptions.defaults());
 			Map<String, String> cache = map.getCachedMap();
 			first_name = map.get("FirstName");
 			// middle_name = map.get("MiddleName");
@@ -242,8 +248,7 @@ public class redissonStress {
 
 		   String stringValue = String.valueOf(i);
 		   String person_index = "Person:Cached:" + String.valueOf(i);
-		   RLocalCachedMap<String, String> map =  redissonClient.getLocalCachedMap(person_index, getOptions());
-		   Map<String, String> cache = map.getCachedMap();
+		   RLocalCachedMap<String, String> map =  redissonClient.getLocalCachedMap(person_index, LocalCachedMapOptions.defaults());
 		   map.fastPut ("FirstName", "jason" + stringValue);
 		   map.fastPut("MiddleName", "oliver" + stringValue);
 		   map.fastPut ("LastName", "haugland" + stringValue);
@@ -251,6 +256,10 @@ public class redissonStress {
 		   int age = 25 + (i / 2);
 		   String age_string = String.valueOf(age);
 		   map.fastPut ("age", age_string);
+		   Map<String, String> localMap = map.getCachedMap();
+		   maps.add(localMap);
+		   String first_name = localMap.get("FirstName");   //  avoids read
+		   // System.out.println(" localMap size " +  String.valueOf(localMap.size()) + " firstname " + first_name);
 	   }
 
 		timer.end();
@@ -280,6 +289,45 @@ public class redissonStress {
 			numbers.add(i);
 
 		System.out.println(numbers.readAll());
+	}
+	private static void cacheExample(RedissonClient redissonClient) {
+
+		LocalCachedMapOptions options = LocalCachedMapOptions.defaults()
+				.cacheSize(10000)
+				.evictionPolicy(LocalCachedMapOptions.EvictionPolicy.LRU)
+				.maxIdle(10, TimeUnit.SECONDS)
+				.timeToLive(60, TimeUnit.SECONDS);
+
+		RLocalCachedMap<String, Integer> cachedMap = redissonClient.getLocalCachedMap("myMap", options);
+		cachedMap.put("a", 1);
+		cachedMap.put("b", 2);
+		cachedMap.put("c", 3);
+
+		boolean contains = cachedMap.containsKey("a");
+
+		Integer value = cachedMap.get("c");
+
+		// Integer new_int = 32;
+		// Float new_number = new_int.floatValue();
+		// Integer updatedValue = cachedMap.addAndGet("a", new_number);
+
+		Integer valueSize = cachedMap.valueSize("c");
+
+		Set<String> keys = new HashSet<String>();
+		keys.add("a");
+		keys.add("b");
+		keys.add("c");
+		Map<String, Integer> mapSlice = cachedMap.getAll(keys);
+
+		// use read* methods to fetch all objects
+		Set<String> allKeys = cachedMap.readAllKeySet();
+		Collection<Integer> allValues = cachedMap.readAllValues();
+		Set<Map.Entry<String, Integer>> allEntries = cachedMap.readAllEntrySet();
+
+		// use fast* methods when previous value is not required
+		boolean isNewKey = cachedMap.fastPut("a", 100);
+		boolean isNewKeyPut = cachedMap.fastPutIfAbsent("d", 33);
+		long removedAmount = cachedMap.fastRemove("b");
 	}
 
 }
