@@ -1,0 +1,43 @@
+version: '3'
+services:
+
+  redis:
+    # image: "arm64v8/redis:latest"
+    image: "redis:latest"
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: --requirepass ps2kpXjk
+    volumes:
+      - ./redis_data1:/data
+    environment:
+      - REDIS_PASSWORD=ps2kpXjk
+
+
+  redissoncsc:
+    image: redissoncsc
+    # image: jphaugla/bankapp:latest
+    container_name: redissoncsc
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    volumes:
+      - "./app/:/usr/src/app"
+    environment:
+      # - REDIS_CONNECTION="redis://rediss:6379"
+      - REDIS_CONNECTION="redis://redis:6379"
+      # REDIS_REPLICA1="redis://redis2:6380"
+      # REDIS_REPLICA2="redis://redis3:6381"
+      - CORE_POOLSIZE=20
+      - REDIS_PASSWORD=ps2kpXjk
+      #  either one works. with vars has the environment variables replaced in file
+      - REDISSON_YAML_PATH=/etc/redisson.yaml
+      # - REDISSON_YAML_PATH=/etc/redisson-replica-vars.yaml
+      #  single instance with SSL configured
+      # - REDISSON_YAML_PATH=/etc/redisson-ssl.yaml
+      - READ_COUNT=200
+      - WRITE_COUNT=2000
+    depends_on:
+      - redis
