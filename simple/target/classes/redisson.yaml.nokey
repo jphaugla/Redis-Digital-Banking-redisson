@@ -1,5 +1,0 @@
-singleServerConfig:
-  address: ${REDIS_CONNECTION}
-  password: ${REDIS_PASSWORD}
-  subscriptionsPerConnection: 10
-  subscriptionConnectionPoolSize: 500
