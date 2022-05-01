@@ -24,10 +24,12 @@ Provides a quick-start example of using Redisson with springBoot and redisson wi
     - [Generate Load](#generate-load)
     - [Redisson with TLS](#redisson-with-tls)
   - [Redisson Client-side-caching](#redisson-client-side-caching)
-    - [Set the environment](#set-client-side-caching-environment)
-    - [Edit for tests to run](#edit-test-programs-to-run)
-    - [Compile Client Side Caching](#compile-client-side-caching)
-    - [Execute the jar file](#run-the-sample-program)
+    - [Redisson Pro or open source](#redisson-pro-or-open-source)
+    - [Client-side-caching instructions](#redisson-client-side-caching-instructions)
+      - [Set the environment](#set-client-side-caching-environment)
+      - [Edit for tests to run](#edit-test-programs-to-run)
+      - [Compile Client Side Caching](#compile-client-side-caching)
+      - [Execute the jar file](#run-the-sample-program)
 
 
 ### Note:  This is the same as Redisearch-Digital-Banking but uses redisson redistemplate instead of the crudrepository indexes.  redisearch 2.0 indexes will be used.  This is not using the crudrepository for the basic redis data. 
@@ -349,7 +351,7 @@ This is a client side caching demo in a subdirectory of this github called "simp
   * [Redisson open source and pro features](https://redisson.pro/#compare-editions)
 * The ![pom.xml](simple/pom.xml) has the opensource redisson dependency commented out and the redisson pro part in place
 * For redisson pro, edit the ![redisson.yaml](src/main/resources/redisson.yaml) file adding the registration key
-### Redisson Instructions
+### Redisson Client Side Caching Instructions
 #### move to subfolder
 ```bash
 cd simple
