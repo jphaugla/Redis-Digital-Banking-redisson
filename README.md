@@ -349,8 +349,8 @@ This is a client side caching demo in a subdirectory of this github called "simp
 ### Redisson Pro or open source
 * When using redisson, be aware of what can be accomplished with open source redisson and where the line is crossed to redisson pro.
   * [Redisson open source and pro features](https://redisson.pro/#compare-editions)
-* The ![pom.xml](simple/pom.xml) has the opensource redisson dependency commented out and the redisson pro part in place
-* For redisson pro, edit the ![redisson.yaml](src/main/resources/redisson.yaml) file adding the registration key
+* The [pom.xml](simple/pom.xml) has the opensource redisson dependency commented out and the redisson pro part in place
+* For redisson pro, edit the [redisson.yaml](src/main/resources/redisson.yaml) file adding the registration key
 ### Redisson Client Side Caching Instructions
 #### move to subfolder
 ```bash
@@ -363,7 +363,7 @@ source ../scripts/setEnv.sh
 ```
 
 #### Edit test programs to run
-The ![main program](simple/src/main/java/com/jphaugla/redisson/client/redissonStress.java) creates a redisson connection, calls test routines, and closes the connection.  It is a quick edit to uncomment/comment the tests to run
+The [main program](simple/src/main/java/com/jphaugla/redisson/client/redissonStress.java) creates a redisson connection, calls test routines, and closes the connection.  It is a quick edit to uncomment/comment the tests to run
 * Edit above program for tests to run
 #### Compile Client Side Caching
 ```
