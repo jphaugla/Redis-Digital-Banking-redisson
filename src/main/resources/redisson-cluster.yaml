@@ -1,0 +1,6 @@
+clusterServersConfig:
+  nodeAddresses:
+  - ${REDIS_CONNECTION}
+  password: ${REDIS_PASSWORD}
+  readMode: MASTER
+  subscriptionMode: MASTER
