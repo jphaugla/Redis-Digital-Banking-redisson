@@ -15,6 +15,7 @@ Provides a quick-start example of using Redisson with springBoot and redisson wi
   - [Deploy on Linux](#deploy-linux)
     - [Compile the Application](#compile-the-application)
     - [Set Environment](#set-environment)
+  - [Redisson yaml configuration](#redisson-yaml-files)
   - [Kubernetes](#kubernetes)
     - [Install Redis Enterprise](#install-redis-enterprise)
     - [Add Redisinsights](#add-redisinsights)
@@ -32,7 +33,8 @@ Provides a quick-start example of using Redisson with springBoot and redisson wi
       - [Execute the jar file](#run-the-sample-program)
 
 
-### Note:  This is the same as Redisearch-Digital-Banking but uses redisson redistemplate instead of the crudrepository indexes.  redisearch 2.0 indexes will be used.  This is not using the crudrepository for the basic redis data. 
+### Note:  These other githubs are similar:  
+* Redisearch-Digital-Banking but uses redisson redistemplate instead of the crudrepository indexes.  redisearch 2.0 indexes will be used.  This is not using the crudrepository for the basic redis data. 
 
 ## Overview
 In this tutorial, a java spring boot application is run through a jar file to support typical API calls to a REDIS banking data layer.  A redis docker configuration is included.
@@ -42,20 +44,19 @@ Additionally, a version of this with SSL is documented with optional redisson ya
  * Redis easily handles high write transaction volume
  * Redis has no tombstone issues and can upsert posted transactions over pending
  * Redis Enterprise scales vertically (large nodes)  and horizontally (many nodes)
- * Redisearch 2.0 automatically indexes the hash structure created by Spring Java CRUD repository
  * Redisson will use read replicas to distribute the read workload across a primary and multiple replicas
  * Redisson has client side caching capability
 
 ## Important Links/Notes
-
+### Spring Data
 * [spring data for redis github](https://github.com/spring-projects/spring-data-examples/tree/master/redis/repositories)
 * [spring data for redis sample code](https://www.oodlestechnologies.com/blogs/Using-Redis-with-CrudRepository-in-Spring-Boot/)
 * [lettuce tips redis spring boot](https://www.bytepitch.com/blog/redis-integration-spring-boot/)
 * [spring data Reference in domain](https://github.com/spring-projects/spring-data-examples/blob/master/redis/repositories/src/main/java/example/springdata/redis/repositories/Person.java)
 * [spring data reference test code](https://github.com/spring-projects/spring-data-examples/blob/master/redis/repositories/src/test/java/example/springdata/redis/repositories/PersonRepositoryTests.java)
 * [spring async tips](https://dzone.com/articles/effective-advice-on-spring-async-part-1)
-* [brewdis sample application](https://github.com/redis-developer/brewdis)
-* [redis-developer lettucemod mesclun](https://github.com/redis-developer/lettucemod)
+* [redis-developer lettucemod](https://github.com/redis-developer/lettucemod)
+### Redisson
 * [redisson with spring boot starter](https://github.com/redisson/redisson/tree/master/redisson-spring-boot-starter#2-add-settings-into-applicationsettings-file)
 * [redisson with primary and replica shards](https://redisson.org/glossary/redis-master-slave-replication.html)
 * [Setting up SSL with Redis Enterprise](https://tgrall.github.io/blog/2020/01/02/how-to-use-ssl-slash-tls-with-redis-enterprise/)
@@ -63,14 +64,19 @@ Additionally, a version of this with SSL is documented with optional redisson ya
 * [Redisson and local cache intro](https://redisson.org/glossary/redis-caching.html)
 * [Redisson open source and pro features](https://redisson.pro/#compare-editions)
 * [Redisson near cache](https://dzone.com/articles/how-to-boost-redis-with-local-caching-in-java)
-* [Redisson frmo Baeldung](https://www.baeldung.com/redis-redisson)
+* [Redisson from Baeldung](https://www.baeldung.com/redis-redisson)
 * [Redisson Distributed Collections](https://github.com/redisson/redisson/wiki/7.-Distributed-collections)
+* [Redisson configuration](https://github.com/redisson/redisson/wiki/2.-Configuration)
+### Related githubs
+* [brewdis sample application](https://github.com/redis-developer/brewdis)
+* [Digital Banking github using CRUD repository](https://github.com/jphaugla/Redis-Digital-Banking)
+* [Digital Banking with redistemplate and redisearch](https://github.com/jphaugla/Redisearch-Digital-Banking-redisTemplate)
 
 ## Technical Overview
 ### The spring java code
 This is basic spring links
 * [Spring Redis](https://docs.spring.io/spring-data/data-redis/docs/current/reference/html/#redis.repositories.indexes)
-* *config*-Initial configuration module using autoconfiguration and a threadpool sizing to adjust based on machine size
+* *config*-Initial configuration module with redisson connection factory using autoconfiguration and a threadpool sizing to adjust based on machine size
 * *controller*-http API call interfaces
 * *data*-code to generate POC type of customer, account, and transaction code
 * *domain*-has each of the java objects with their columns.  Enables all the getter/setter methods
@@ -115,9 +121,11 @@ git clone https://github.com/jphaugla/Redis-Digital-Banking-redisson.git
 ```bash
 docker-compose up -d
 ```
-this environment has 4 docker containers, 3 redis containers (redis, redis2, redis3).  redis2 and redis3 are replicas of the primary redis instance in the container simply named "redis".
-NOTE:  redisson splits read load evenly across the three redis containers
-This docker compose will build the docker image for the java application using "docker compose build" and deploy it to docker.  
+#### Notes on this docker-compose setup
+* this environment has 4 docker containers, 3 redis containers (redis, redis2, redis3).  redis2 and redis3 are replicas of the primary redis instance in the container simply named "redis".
+* redisson splits read load evenly across the three redis containers
+* the redisson based java application can be built using "docker compose build"
+* this is just one use case for redisson.  Redisson configuration is controlled with the *REDISSON_YAML_PATH* environment variable
 
 ### Deploy Linux
 The following steps are if you want to run on a separate environment without docker.  To do this, comment out the bankapp from the docker image
@@ -142,13 +150,72 @@ git clone https://github.com/jphaugla/Redis-Digital-Banking-redisson.git
 mvn package
 ```
 #### Set Environment
+| variable               | Original Value         | Desccription                                                                                           |
+|------------------------|------------------------|--------------------------------------------------------------------------------------------------------|
+| REDIS_CONNECTION       | redis://redis:6379     | redis connection string                                                                                |
+| REDIS_REPLICA1         | redis://redis:6380     | redis replica1 connection string (only used if using replica)                                          |
+| REDIS_REPLICA2         | redis://redis:6381     | redis replica2 connection string (only used if using replica)                                          |
+| CORE_POOL_SIZE         | 20                     | On larger machines, increasing this will increase load speed                                           |
+| REDISSON_YAML_PATH     | /etc/redisson-ssl.yaml | Full path to redisson yaml file.  Documentation provided below                                         |
+| ---------------------- | -----------------      | ------------------------------------------------------------------------------------------------------ |
 * run the jar file after setting up required environment variables. 
 * Also have set up a script to do these environment variables instead of typing this under ./scripts/setEnv.sh to use this
+#### Redisson yaml path
+The redisson yaml controls the behavior of redisson with the shards-redisson documentation for the [redisson yaml](https://github.com/redisson/redisson/wiki/2.-Configuration)
+Several samples are provided in this github.
+##### [Basic redisson configuration](https://github.com/jphaugla/Redis-Digital-Banking-redisson/blob/main/src/main/resources/redisson.yaml)
+```bash
+singleServerConfig:
+  address: ${REDIS_CONNECTION}
+  password: ${REDIS_PASSWORD}
+```
+* more documentation on [basic configuration](https://github.com/redisson/redisson/wiki/2.-Configuration#26-single-instance-mode)
+* works with redis enterprise or with single OSS redis node
+##### [SSL redisson configuration](https://github.com/jphaugla/Redis-Digital-Banking-redisson/blob/main/src/main/resources/redisson-ssl.yaml)
+```bash
+singleServerConfig:
+  address: ${REDIS_CONNECTION}
+  password: ${REDIS_PASSWORD}
+  sslProtocols:
+    - TLSv1.3
+    - TLSv1.2
+    - TLSv1.1
+    - TLSv1
+  sslProvider: JDK
+  sslKeystore: file:./src/main/resources/ssl/client-keystore.p12
+  sslKeystorePassword: ${KEYSTORE_PASSWORD}
+  sslTruststore: file:./src/main/resources/ssl/client-truststore.p12
+  sslTruststorePassword: ${TRUSTSTORE_PASSWORD}
+```
+##### [Cluster redisson configuration](https://github.com/jphaugla/Redis-Digital-Banking-redisson/blob/main/src/main/resources/redisson-cluster.yaml)
+```bash
+clusterServersConfig:
+  nodeAddresses:
+  - ${REDIS_CONNECTION}
+  password: ${REDIS_PASSWORD}
+  readMode: MASTER
+  subscriptionMode: MASTER
+```
+* more documentation on [cluster configuration](https://github.com/redisson/redisson/wiki/2.-Configuration#24-cluster-mode)
+* works with redis enterprise in OSS API mode or with AWS Elasticache
+##### [Master Slave Mode configuration](https://github.com/jphaugla/Redis-Digital-Banking-redisson/blob/main/src/main/resources/redisson-replica.yaml)
+```bash
+masterSlaveServersConfig:
+  masterAddress: ${REDIS_CONNECTION}
+  readMode: ${READ_MODE}
+  subscriptionMode: "SLAVE"
+  password: ${REDIS_PASSWORD}
+  slaveAddresses:
+    - ${REDIS_REPLICA1}
+    - ${REDIS_REPLICA2}
+```
+* more documentation on [MasterSlave Mode](https://github.com/redisson/redisson/wiki/2.-Configuration#28-master-slave-mode)
+* works with replica of nodes
 ```bash
 source ./scripts/setEnv.sh
 ```
 * alternatively, these are the commands
-
+### Redisson yaml files
 One "learning" on the redisson yaml:  the password must be the same on all the redis databases whether they are primary or secondary.
 There is only one password parameter and you cannot use the ":password" embedded in the URL to to add the password
 ```bash
@@ -268,13 +335,10 @@ Shows a benchmark test run of  generateData.sh on GCP servers.  Although, this t
 
 ##  Investigate the APIs 
 These scripts are in ./scripts
-  * addTag.sh (currently not implemented) - add a tag to a transaction.  Tags allow user to mark  transactions to be in a buckets such as Travel or Food for budgetary tracking purposes
-  * deleteCustomer.sh (currently not implemented) - delete all customers matching a string
+  mark  transactions to be in a buckets such as Travel or Food for budgetary tracking purposes
   * generateData.sh - simple API to generate default customer, accounts, merchants, phone numbers, emails and transactions
   * generateLots.sh - for server testing to generate higher load levels.  Use with startAppservers.sh.  Not for use with docker setup.  This is load testing with redis enterprise and client application running in same network in the cloud.
   * generateRedisson.sh - writes a few commands using a base redisson connection outside of redistemplate
-  * getByAccount.sh (currently not implemented) - find transactions for an account between a date range
-  * getByCreditCard.sh (currently not implemented) - find transactions for a credit card  between a date range
   * getCustomerByEmails.sh - gets email for customer ids starting from 100001 for the desired range - this is used for generating read load
   * getCustomerByPhone.sh - gets phone numbers for customer ids starting from 100001 for the desired range - this is used for generating read load
   * getCustomers.sh - gets a range of customer id starting from 100001 for the desired range - this is used for generating read load
@@ -282,17 +346,8 @@ These scripts are in ./scripts
   * getCustomerPhones.sh - gets phone numbers  for customer ids starting from 100001 for the desired range - this is used for generating read load
   * getByCustID.sh - retrieve transactions for customer
   * getByEmail.sh - retrieve customer record using email address
-  * getByMerchant.sh (currently not implemented) - find all transactions for an account from one merchant for date range
-  * getByMerchantCategory.sh (currently not implemented) - find all transactions for an account from merchant category for date range
-  * getByNamePhone.sh (currently not implemented) - get customers by phone and full name.
   * getByPhone.sh - get customers by phone only
-  * getByStateCity.sh (currently not implemented)  - get customers by city and state
-  * getByZipLastname.sh - (currently not implemented) get customers by zipcode and lastname.
-  * getReturns.sh (currently not implemented)  - get returned transactions count by reason code
-  * getTags.sh (currently not implemented) - get all tags on an account
-  * getTaggedAccountTransactions.sh (currently not implemented) - find transactions for an account with a particular tag
   * getTransaction.sh - get one transaction by its transaction ID
-  * getTransactionStatus.sh (currently not implemented) - see count of transactions by account status of PENDING, AUTHORIZED, SETTLED
   * loop.sh - used to load testing to keep infinite loop running.  pass parameter of script to run
   * putCustomer.sh - put a set of json customer records
   * saveAccount.sh - save a sample account
@@ -300,7 +355,6 @@ These scripts are in ./scripts
   * saveTransaction.sh - save a sample Transaction
   * startAppservers.sh - start multiple app server instances for load testing
   * testPipeline.sh - test pipelining
-  * updateTransactionStatus.sh (currently not implemented) - generate new transactions to move all transactions from one transaction Status up to the next transaction status. Parameter is target status.  Can choose SETTLED or POSTED.  Will move 100,000 transactions per call
 
 ## Generate Load
 * to generate data, use generateData.sh
