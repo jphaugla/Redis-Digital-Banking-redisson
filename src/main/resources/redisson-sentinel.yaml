@@ -1,0 +1,5 @@
+sentinelServersConfig:
+  sentinelAddresses: ${REDIS_SENTINEL_CONNECTION}
+  username: ${REDIS_USERNAME}
+  password: ${REDIS_PASSWORD}
+  masterName: "db1""

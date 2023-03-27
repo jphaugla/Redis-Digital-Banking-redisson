@@ -168,6 +168,8 @@ Several samples are provided in this github.
 singleServerConfig:
   address: ${REDIS_CONNECTION}
   password: ${REDIS_PASSWORD}
+#  can un-comment this out if  using an ACL
+  # username: ${REDIS_USERNAME}
 ```
 * more documentation on [basic configuration](https://github.com/redisson/redisson/wiki/2.-Configuration#26-single-instance-mode)
 * works with redis enterprise or with single OSS redis node
@@ -176,6 +178,8 @@ singleServerConfig:
 singleServerConfig:
   address: ${REDIS_CONNECTION}
   password: ${REDIS_PASSWORD}
+#  can un-comment this out if  using an ACL
+  # username: ${REDIS_USERNAME}
   sslProtocols:
     - TLSv1.3
     - TLSv1.2
@@ -193,6 +197,8 @@ clusterServersConfig:
   nodeAddresses:
   - ${REDIS_CONNECTION}
   password: ${REDIS_PASSWORD}
+#  can un-comment this out if  using an ACL
+  # username: ${REDIS_USERNAME}
   readMode: MASTER
   subscriptionMode: MASTER
 ```
@@ -211,6 +217,14 @@ masterSlaveServersConfig:
 ```
 * more documentation on [MasterSlave Mode](https://github.com/redisson/redisson/wiki/2.-Configuration#28-master-slave-mode)
 * works with replica of nodes
+#####[Sentinel configuration](https://github.com/redisson/redisson/wiki/2.-Configuration#27-sentinel-mode)
+```bash
+sentinelServersConfig:
+  sentinelAddresses: ${REDIS_SENTINEL_CONNECTION}
+  username: ${REDIS_USERNAME}
+  password: ${REDIS_PASSWORD}
+  masterName: "db1""
+```
 ```bash
 source ./scripts/setEnv.sh
 ```

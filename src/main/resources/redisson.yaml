@@ -1,3 +1,5 @@
 singleServerConfig:
   address: ${REDIS_CONNECTION}
   password: ${REDIS_PASSWORD}
+#  can un-comment this out if  using an ACL
+  #username: ${REDIS_USERNAME}
