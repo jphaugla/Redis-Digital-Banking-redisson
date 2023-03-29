@@ -225,6 +225,27 @@ sentinelServersConfig:
   password: ${REDIS_PASSWORD}
   masterName: "db1""
 ```
+* this works with sentinel and ssl
+```bash
+sentinelServersConfig:
+  sentinelAddresses:
+  - ${REDIS_SENTINEL_CONNECTION}
+  username: ${REDIS_USERNAME}
+  password: ${REDIS_PASSWORD}
+  masterName: "db1"
+  sslProtocols:
+    - TLSv1.3
+    - TLSv1.2
+    - TLSv1.1
+    - TLSv1
+  sslProvider: JDK
+  sslKeystore: file:./src/main/resources/ssl/client-keystore.p12
+  sslKeystorePassword: ${KEYSTORE_PASSWORD}
+  sslTruststore: file:./src/main/resources/ssl/client-truststore.p12
+  sslTruststorePassword: ${TRUSTSTORE_PASSWORD}
+  readMode: MASTER
+```
+source the environment script
 ```bash
 source ./scripts/setEnv.sh
 ```
@@ -404,8 +425,48 @@ cd src/main/resources/ssl
 ./generatetrust.sh
 ./importkey.sh
 ```
+This is just to test the redis cli commands
+Both of these redis cli command structures work
 ```bash
 redis-cli -u $REDIS_CONNECTION --tls --cacert src/main/resources/ssl/proxy_cert.pem --cert src/main/resources/ssl/client_cert_app_001.pem --key  src/main/resources/ssl/client_key_app_001.pem -a $REDIS_PASSWORD
+redis-cli -h $REDIS_HOST -p $REDIS_PORT --tls --cacert src/main/resources/ssl/proxy_cert.pem --cert src/main/resources/ssl/client_cert_app_001.pem --key  src/main/resources/ssl/client_key_app_001.pem -a $REDIS_PASSWORD
+```
+This is only needed if turning on ssl with sentinel
+All three of these commands work successful with SENTINEL masters
+```bash
+redis-cli -h $REDIS_HOST -p $REDIS_PORT --tls --cacert src/main/resources/ssl/proxy_cert.pem --cert src/main/resources/ssl/client_cert_app_001.pem --key  src/main/resources/ssl/client_key_app_001.pem 
+redis-cli -u $REDIS_SENTINEL_CONNECTION --tls --cacert src/main/resources/ssl/proxy_cert.pem --cert src/main/resources/ssl/client_cert_app_001.pem --key  src/main/resources/ssl/client_key_app_001.pem
+redis-cli -u $REDIS_SENTINEL_CONNECTION --tls --cacert src/main/resources/ssl/proxy_cert.pem --cert src/main/resources/ssl/client_cert_app_001.pem --key  src/main/resources/ssl/client_key_app_001.pem --user jph
+redis-18199.jphterra2.demo-rlec.redislabs.com:8001> SENTINEL masters
+1)  1) "name"
+    2) "db1@internal"
+    3) "ip"
+    4) "10.1.1.252"
+    5) "port"
+    6) "18199"
+    7) "flags"
+    8) "master"
+    9) "num-other-sentinels"
+   10) "0"
+2)  1) "name"
+    2) "db1"
+    3) "ip"
+    4) "54.177.48.3"
+    5) "port"
+    6) "18199"
+    7) "flags"
+    8) "master"
+    9) "num-other-sentinels"
+   10) "0"
+```
+Interestingly, redis-cli generates an error message but still gets the connection if the password is added.  So, these all  generate error
+```bash
+redis-cli -u $REDIS_SENTINEL_CONNECTION --tls --cacert src/main/resources/ssl/proxy_cert.pem --cert src/main/resources/ssl/client_cert_app_001.pem --key  src/main/resources/ssl/client_key_app_001.pem --pass $REDIS_PASSWORD
+redis-cli -u $REDIS_SENTINEL_CONNECTION --tls --cacert src/main/resources/ssl/proxy_cert.pem --cert src/main/resources/ssl/client_cert_app_001.pem --key  src/main/resources/ssl/client_key_app_001.pem --user $REDIS_USERNAME --pass $REDIS_PASSWORD
+redis-cli -u $REDIS_SENTINEL_CONNECTION --tls --cacert src/main/resources/ssl/proxy_cert.pem --cert src/main/resources/ssl/client_cert_app_001.pem --key  src/main/resources/ssl/client_key_app_001.pem --user $REDIS_USERNAME -a $REDIS_PASSWORD
+redis-cli -u $REDIS_SENTINEL_CONNECTION --tls --cacert src/main/resources/ssl/proxy_cert.pem --cert src/main/resources/ssl/client_cert_app_001.pem --key  src/main/resources/ssl/client_key_app_001.pem -a $REDIS_PASSWORD
+Warning: Using a password with '-a' or '-u' option on the command line interface may not be safe.
+AUTH failed: ERR unknown command
 ```
 * package and run application
 ```bash
